@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from os_platform.models import RequestState, ServiceRequest
+from os_platform.models import ServiceRequest
 from os_platform.scheduler import run_fcfs
 from os_platform.storage import load_requests, save_requests
 
