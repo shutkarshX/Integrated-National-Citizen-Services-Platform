@@ -32,6 +32,18 @@ python main.py
 python -m unittest discover -s tests -v
 ```
 
+## Phase 1 Linux / shell automation check
+
+On Linux or WSL, run this from the repository root:
+
+```bash
+bash scripts/phase1_check.sh
+```
+
+It checks required project files, runs the unit tests, and launches the synthetic CLI demo. It does not install packages or contact external services. The first run on your machine is still required before claiming the shell script has been verified.
+
+See [the Phase 1 syllabus coverage checklist](docs/PHASE_1_CHECKLIST.md) for the Module 1–2 gap audit.
+
 ## Implemented
 
 - `ServiceRequest` model with process lifecycle states: NEW, READY, RUNNING, WAITING, TERMINATED
