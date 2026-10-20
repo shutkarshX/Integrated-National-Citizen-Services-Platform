@@ -46,7 +46,7 @@ It checks required project files, runs the unit tests, and launches the syntheti
 powershell -ExecutionPolicy Bypass -File .\\scripts\\phase1_check.ps1
 ```
 
-See [the Phase 1 syllabus coverage checklist](docs/PHASE_1_CHECKLIST.md) for the Module 1–2 gap audit and [Phase 1 OS concept notes](docs/PHASE_1_OS_CONCEPTS.md) for syllabus-aligned explanations and the verified evidence record.
+See [the Phase 1 syllabus coverage checklist](docs/PHASE_1_CHECKLIST.md) for the Module 1–2 gap audit and [Phase 1 OS concept notes](docs/PHASE_1_OS_CONCEPTS.md) for syllabus-aligned explanations, plus the [Phase 1 evidence pack](docs/PHASE_1_EVIDENCE_PACK.md) for the process lifecycle diagram, FCFS Gantt chart, formulas, and practical evidence records.
 
 ## Implemented
 
