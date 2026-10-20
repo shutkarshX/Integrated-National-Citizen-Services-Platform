@@ -40,7 +40,11 @@ On Linux or WSL, run this from the repository root:
 bash scripts/phase1_check.sh
 ```
 
-It checks required project files, runs the unit tests, and launches the synthetic CLI demo. It does not install packages or contact external services. The first run on your machine is still required before claiming the shell script has been verified.
+It checks required project files, runs the unit tests, and launches the synthetic CLI demo. It does not install packages or contact external services. The first run on your machine is still required before claiming either script has been verified. On Windows PowerShell, use the native equivalent:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\\scripts\\phase1_check.ps1
+```
 
 See [the Phase 1 syllabus coverage checklist](docs/PHASE_1_CHECKLIST.md) for the Module 1–2 gap audit.
 
