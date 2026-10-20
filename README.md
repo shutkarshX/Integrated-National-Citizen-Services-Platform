@@ -1,6 +1,6 @@
 # Integrated National Citizen Services Platform
 
-**Operating Systems PBL — Phase 1 starter baseline**
+**Operating Systems PBL — implementation baseline**
 
 An educational command-line simulation of citizen-service requests, built to demonstrate operating-system concepts through a small, inspectable Python project.
 
@@ -12,7 +12,7 @@ The simulator models four synthetic service categories:
 - Grievance redressal
 - Tax services
 
-Requests are represented as processes with simple lifecycle states and are processed using a deterministic First-Come, First-Served (FCFS) scheduler. Demo records are stored as JSON.
+Each service request is represented as a simulated process. Its request ID acts as a process identifier, and the request stores PCB-like metadata: lifecycle state, arrival time, burst time, start time, finish time, waiting time, and turnaround time. The current scheduler uses deterministic First-Come, First-Served (FCFS) processing. Demo records are stored as JSON.
 
 > This is an academic simulation. It does not connect to real government systems and uses synthetic demo data only.
 
@@ -32,25 +32,32 @@ python main.py
 python -m unittest discover -s tests -v
 ```
 
-The initial starter baseline was tested locally: 11 unit tests passed. This is not a claim of a GitHub-hosted CI run.
+## Implemented
 
-## Current baseline and limitations
-
-Implemented:
-- A `ServiceRequest` model and lifecycle status values
-- FCFS sequential request processing
+- `ServiceRequest` model with process lifecycle states: NEW, READY, RUNNING, WAITING, TERMINATED
+- PCB-like scheduling metadata: arrival, burst, start, finish, waiting, and turnaround times
+- FCFS sequential processing, including requests with later arrival times
 - JSON save/load helpers
-- A CLI demonstration using synthetic requests
-- Unit tests for scheduler and storage behavior
+- CLI demonstration using synthetic requests
+- Unit tests for scheduler timing, lifecycle outcome, repeat runs, and storage behavior
 
-Not yet implemented:
+## Scheduling definitions
+
+- **Waiting time** = start time − arrival time
+- **Turnaround time** = finish time − arrival time
+- **Finish time** = start time + burst time
+
+The current implementation is deliberately single-threaded. FCFS processes requests in the supplied list order; it does not sort requests by arrival time. A later-arriving request causes the simulated CPU clock to wait until that request's arrival only when the clock is earlier than its arrival time.
+
+## Not yet implemented
+
 - Concurrent processing or real synchronization primitives
 - Blocking/wakeup simulation for waiting requests
-- Alternate CPU scheduling algorithms
+- Alternate CPU scheduling algorithms such as Round Robin or Priority
 - Deadlock experiments or role-based access control
 - A web interface or integration with real public services
 
-These are possible next steps after the baseline is reviewed and the Phase 1 scope is confirmed.
+These are possible next steps after the current baseline is tested and reviewed.
 
 ## Project structure
 
