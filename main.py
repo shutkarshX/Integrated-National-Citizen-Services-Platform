@@ -33,7 +33,10 @@ def main():
         print(
             f"{request.request_id}: {request.service_type:<12} "
             f"state={request.state.value:<12} "
-            f"start={request.start_time} finish={request.finish_time}"
+            f"arrival={request.arrival_time} "
+            f"start={request.start_time} finish={request.finish_time} "
+            f"waiting={request.waiting_time} "
+            f"turnaround={request.turnaround_time}"
         )
 
     save_requests(DATA_FILE, results)
