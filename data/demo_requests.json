@@ -1,0 +1,38 @@
+[
+  {
+    "request_id": "REQ-001",
+    "service_type": "Certificate",
+    "applicant_label": "Citizen A",
+    "burst_time": 3,
+    "state": "NEW",
+    "start_time": null,
+    "finish_time": null
+  },
+  {
+    "request_id": "REQ-002",
+    "service_type": "Identity",
+    "applicant_label": "Citizen B",
+    "burst_time": 2,
+    "state": "NEW",
+    "start_time": null,
+    "finish_time": null
+  },
+  {
+    "request_id": "REQ-003",
+    "service_type": "Grievance",
+    "applicant_label": "Citizen C",
+    "burst_time": 4,
+    "state": "NEW",
+    "start_time": null,
+    "finish_time": null
+  },
+  {
+    "request_id": "REQ-004",
+    "service_type": "Tax",
+    "applicant_label": "Citizen D",
+    "burst_time": 1,
+    "state": "NEW",
+    "start_time": null,
+    "finish_time": null
+  }
+]
