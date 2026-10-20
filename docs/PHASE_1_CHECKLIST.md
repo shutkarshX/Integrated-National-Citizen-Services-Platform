@@ -15,8 +15,8 @@ This is a working checklist, not a claim that every item is already implemented.
 | OS architecture, kernel and system calls | Not implemented as real kernel/system-call behavior by this simulator | Explain accurately; do not claim the Python program implements a kernel |
 | OS types and generations | Theory topic; no project feature required | Prepare concise syllabus-aligned notes/examples |
 | Linux architecture and command-line interface | Not yet recorded as hands-on evidence | Run basic Linux commands and capture genuine terminal output |
-| Shell scripting essentials | Added scripts/phase1_check.sh for project-file checks, test execution and CLI demonstration | Run it on Linux/WSL; capture actual output before marking verified |
-| System-administration automation / case study | Script is a small project-check automation example | Explain purpose, commands used, error handling and observed result |
+| Shell scripting essentials | Bash script exists; native PowerShell equivalent `scripts/phase1_check.ps1` was run successfully on Windows | Windows automation verified; Linux Bash execution remains pending |
+| System-administration automation / case study | Project-check automation script and documentation exist | Explain purpose, commands used, error handling and observed result; add any course-required broader case study only if the rubric requires it |
 
 ## Module 2 — Processes and CPU scheduling
 
@@ -34,7 +34,9 @@ This is a working checklist, not a claim that every item is already implemented.
 
 - Existing implementation: FCFS, process-state model, PCB-like timing metadata, JSON storage and CLI demo.
 - User-reported local verification on 2026-10-20: 12/12 unit tests passed and python main.py completed successfully.
-- New shell script: **not yet verified on Linux/WSL**. Run bash scripts/phase1_check.sh from the repository root and record the actual result.
+- Windows PowerShell automation `scripts/phase1_check.ps1`: **verified by the user** on 2026-10-20; all six required files found, 12/12 tests passed in 0.044s, CLI demo completed, and success message printed.
+- Bash automation `scripts/phase1_check.sh`: **not yet verified on Linux/WSL**. Run it only in an environment with Bash and record the actual result.
+- Supporting notes and diagrams are now available in `docs/PHASE_1_OS_CONCEPTS.md` and `docs/PHASE_1_EVIDENCE_PACK.md`.
 - Do not fabricate Linux screenshots, terminal output, report evidence or completion status.
 
 ## Explicitly outside current Phase 1 implementation
@@ -43,7 +45,8 @@ Do not add these merely to make the project larger: a web interface, real govern
 
 ## Next Phase 1 steps
 
-1. Pull this repository update.
-2. Run bash scripts/phase1_check.sh on Linux/WSL and save genuine output.
-3. Complete the theory/diagram/case-study evidence required by Modules 1–2.
-4. Review the actual Phase 1 report requirements and mark only evidence-backed checklist items complete.
+1. Pull the latest repository updates.
+2. If Linux practical evidence is required, run `bash scripts/phase1_check.sh` on Linux/WSL and save genuine output; otherwise keep Linux execution marked pending.
+3. Compare the checklist and supporting notes with the instructor's actual Phase 1 report requirements.
+4. Capture genuine screenshots/output from the verified Windows run if evidence screenshots are required.
+5. Mark remaining syllabus items complete only after the required explanation, demonstration, or evidence actually exists.
