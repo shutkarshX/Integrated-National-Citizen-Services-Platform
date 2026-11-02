@@ -203,7 +203,7 @@ All 32 tests reported `ok`; zero failures and zero errors. The CLI help and all 
 
 - These results verify the implemented concurrency, synchronization, bounded-buffer and Pipe IPC demonstrations and their current tests.
 - Deadlock management algorithms and CLI demonstrations are locally verified as recorded above.
-- Module 4 memory-management topics remain unimplemented/unverified.
+- Module 4 progress and remaining topics are tracked in `phase-2/docs/IMPLEMENTATION_STATUS.md`; allocation, address translation, demand paging and replacement are verified as detailed below.
 - No screenshots or terminal-output attachments have been committed yet.
 
 
@@ -324,3 +324,78 @@ All 55 tests reported `ok`; zero failures and zero errors. This includes the 10 
 ### Scope note
 
 These demonstrations verify educational address-translation logic in user space. They do not implement a hardware MMU or kernel memory-management subsystem.
+
+
+## Demand paging and page replacement — locally verified 2026-11-03
+
+The project owner ran all three new demonstrations and the complete updated test suite after pulling the correction to the demand-paging test expectation.
+
+### Demand paging demonstration
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py demand-paging-demo
+```
+
+Observed with FIFO and 3 frames, reference string `[7, 0, 1, 2, 0, 3, 0, 4]`:
+- Page faults: 7.
+- Hits: 1.
+- Hit ratio: 0.125.
+- Fault ratio: 0.875.
+
+The first three references fill the frames. The later missing pages cause replacement faults; the reference to page 0 at step 5 is the only hit.
+
+### Page-replacement comparison
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py page-replacement-demo
+```
+
+Observed with 3 frames and reference string `[7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2]`:
+
+| Algorithm | Page faults | Hits |
+|---|---:|---:|
+| FIFO | 10 | 3 |
+| LRU | 9 | 4 |
+| Optimal | 7 | 6 |
+| LFU | 8 | 5 |
+
+LFU uses least-recently-used as its tie-break when resident pages have equal reference frequency. Optimal is a theoretical benchmark because it uses future references.
+
+### Belady's Anomaly
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py belady-anomaly-demo
+```
+
+Observed using FIFO and reference string `[1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5]`:
+- 3 frames: 9 page faults.
+- 4 frames: 10 page faults.
+- `belady_anomaly_observed: True`.
+
+This reproduces Belady's Anomaly: increasing frame count increased FIFO page faults for this reference string.
+
+### Corrected test expectation and full suite
+
+The first run exposed one incorrect test expectation: the FIFO demand-paging sample produced 7 page faults, while its test expected 6. The implementation trace confirmed 7 faults and 1 hit. The test was corrected to expect 7; no algorithm change was required.
+
+After pulling commit `6df588a`, the project owner reran:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed:
+
+```text
+Ran 67 tests in 0.241s
+
+OK
+```
+
+All 67 tests reported `ok`; zero failures and zero errors. The three CLI demonstrations and complete test suite are locally verified. These are user-space teaching simulations, not a kernel virtual-memory implementation.
