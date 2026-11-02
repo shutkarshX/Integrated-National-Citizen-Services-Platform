@@ -8,7 +8,7 @@ Fresh Linux-first implementation workspace. The original repository-root impleme
 - Read-only Linux host inspection using Python standard library and common Linux utilities.
 - Bash system audit: host, kernel, uptime, memory, filesystem and process snapshot.
 - Application-level citizen-service process model with PCB-like metadata and lifecycle state.
-- CPU scheduling simulations: FCFS, non-preemptive SJF, non-preemptive Priority, SRTF and Round Robin.\n- Real user-space child-process creation and waiting using Python `subprocess` (not kernel-level process creation code).\n- Concurrent worker threads sharing a counter protected by `threading.Lock`.
+- CPU scheduling simulations: FCFS, non-preemptive SJF, non-preemptive Priority, SRTF, Round Robin, Multilevel Queue (MLQ) and Multilevel Feedback Queue (MLFQ).\n- Real user-space child-process creation and waiting using Python `subprocess` (not kernel-level process creation code).\n- Concurrent worker threads sharing a counter protected by `threading.Lock`.
 - Unit tests for process validation and scheduling metrics.
 
 These are user-space educational simulations. They do not create or inspect kernel PCBs, change Linux scheduling policy, or integrate real government services. The scheduling algorithms simulate a workload; they do not replace the Linux kernel scheduler.
@@ -18,6 +18,8 @@ These are user-space educational simulations. They do not create or inspect kern
     python3 phase-1/src/main.py system
     python3 phase-1/src/main.py schedule --algorithm fcfs
     python3 phase-1/src/main.py schedule --algorithm rr --quantum 2
+    python3 phase-1/src/main.py schedule --algorithm mlq --quantum 2
+    python3 phase-1/src/main.py schedule --algorithm mlfq
     bash phase-1/scripts/linux_audit.sh
     python3 -m unittest discover -s phase-1/tests -v
 
