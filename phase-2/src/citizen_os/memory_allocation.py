@@ -123,4 +123,8 @@ def run_fixed_partition_demo() -> dict[str, object]:
 
 
 def run_variable_partition_demo(strategy: str = "first-fit") -> dict[str, object]:
-    # Three non-contiguous holes make the placement policies visibly different.\n    return allocate_variable_partitions(1000, [180, 250, 90], strategy,\n                                        initial_holes=[(0, 200), (300, 500), (900, 100)])
+    """Run the variable-partition example with three distinct free holes."""
+    return allocate_variable_partitions(
+        1000, [180, 250, 90], strategy,
+        initial_holes=[(0, 200), (300, 500), (900, 100)],
+    )
