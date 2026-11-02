@@ -4,6 +4,9 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
+from citizen_os.concurrency.patterns import (
+    run_dining_philosophers, run_readers_writers, run_semaphore_demo, run_sleeping_barber,
+)
 
 
 def main() -> None:
@@ -12,39 +15,62 @@ def main() -> None:
 
     race = sub.add_parser("race-demo", help="reproduce a shared-counter race condition")
     race.add_argument("--iterations", type=int, default=100)
-
     locked = sub.add_parser("locked-demo", help="run a mutex-protected shared counter")
     locked.add_argument("--workers", type=int, default=4)
     locked.add_argument("--iterations", type=int, default=1000)
-
     lock = sub.add_parser("lock-demo", help="run a mutual-exclusion algorithm")
     lock.add_argument("--algorithm", choices=["peterson", "strict-alternation", "bakery", "test-and-set"], default="peterson")
     lock.add_argument("--workers", type=int, default=2)
     lock.add_argument("--iterations", type=int, default=500)
-
     pc = sub.add_parser("producer-consumer", help="run a bounded-buffer producer-consumer demo")
     pc.add_argument("--items", type=int, default=20)
     pc.add_argument("--capacity", type=int, default=5)
-
     ipc = sub.add_parser("ipc-demo", help="exchange a message between parent and child processes using a Pipe")
     ipc.add_argument("--message", default="hello from parent")
+    sem = sub.add_parser("semaphore-demo", help="demonstrate binary or counting semaphore capacity")
+    sem.add_argument("--workers", type=int, default=6)
+    sem.add_argument("--permits", type=int, default=2)
+    sem.add_argument("--iterations", type=int, default=20)
+    rw = sub.add_parser("readers-writers", help="run the writer-preference readers-writers monitor")
+    rw.add_argument("--readers", type=int, default=4)
+    rw.add_argument("--writers", type=int, default=2)
+    rw.add_argument("--iterations", type=int, default=10)
+    dp = sub.add_parser("dining-philosophers", help="run deadlock-avoiding dining philosophers")
+    dp.add_argument("--philosophers", type=int, default=5)
+    dp.add_argument("--meals", type=int, default=3)
+    barber = sub.add_parser("sleeping-barber", help="simulate a barber and finite waiting room")
+    barber.add_argument("--customers", type=int, default=10)
+    barber.add_argument("--chairs", type=int, default=3)
 
     args = parser.parse_args()
     if args.command == "race-demo":
         result = run_race_demo(args.iterations)
-        print("Race condition demonstration (two workers, unsynchronized read-modify-write)")
+        label = "Race condition demonstration"
     elif args.command == "locked-demo":
         result = run_locked_counter(args.workers, args.iterations)
-        print("Mutex demonstration (shared counter protected by threading.Lock)")
+        label = "Mutex-protected counter demonstration"
     elif args.command == "lock-demo":
         result = run_lock_demo(args.algorithm, args.workers, args.iterations)
-        print(f"Mutual exclusion demonstration: {args.algorithm}")
+        label = f"Mutual exclusion demonstration: {args.algorithm}"
     elif args.command == "producer-consumer":
         result = run_producer_consumer(args.items, args.capacity)
-        print("Producer-consumer demonstration (bounded buffer with threading.Condition)")
-    else:
+        label = "Bounded-buffer Producer–Consumer demonstration"
+    elif args.command == "ipc-demo":
         result = run_pipe_ipc(args.message)
-        print("Inter-process communication demonstration (multiprocessing.Pipe)")
+        label = "Parent-child IPC demonstration using multiprocessing.Pipe"
+    elif args.command == "semaphore-demo":
+        result = run_semaphore_demo(args.workers, args.permits, args.iterations)
+        label = "Counting semaphore demonstration (use --permits 1 for binary semaphore)"
+    elif args.command == "readers-writers":
+        result = run_readers_writers(args.readers, args.writers, args.iterations)
+        label = "Readers–Writers monitor demonstration (writer preference)"
+    elif args.command == "dining-philosophers":
+        result = run_dining_philosophers(args.philosophers, args.meals)
+        label = "Dining Philosophers demonstration (N-1 room semaphore)"
+    else:
+        result = run_sleeping_barber(args.customers, args.chairs)
+        label = "Sleeping Barber finite waiting-room demonstration"
+    print(label)
     for key, value in result.items():
         print(f"{key}: {value}")
 
