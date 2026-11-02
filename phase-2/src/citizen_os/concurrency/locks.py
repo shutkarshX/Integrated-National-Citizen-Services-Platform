@@ -114,3 +114,42 @@ class TestAndSetLock:
             yield
         finally:
             self._flag.release()
+
+
+def run_lock_demo(algorithm: str, participants: int = 2, increments_per_participant: int = 500) -> dict[str, int | str]:
+    """Run a shared-counter demonstration using one of the syllabus lock algorithms."""
+    factories = {
+        "peterson": lambda: PetersonLock(),
+        "strict-alternation": lambda: StrictAlternationLock(),
+        "bakery": lambda: BakeryLock(participants),
+        "test-and-set": lambda: TestAndSetLock(),
+    }
+    if algorithm not in factories:
+        raise ValueError(f"unknown algorithm: {algorithm}")
+    if participants < 2 and algorithm in {"peterson", "strict-alternation"}:
+        raise ValueError(f"{algorithm} requires exactly two participants")
+    if algorithm in {"peterson", "strict-alternation"} and participants != 2:
+        raise ValueError(f"{algorithm} requires exactly two participants")
+    if participants < 1 or increments_per_participant < 0:
+        raise ValueError("participants must be >= 1 and increments_per_participant >= 0")
+
+    lock = factories[algorithm]()
+    counter = 0
+
+    def worker(pid: int) -> None:
+        nonlocal counter
+        for _ in range(increments_per_participant):
+            context = lock.hold(pid) if algorithm in {"peterson", "strict-alternation", "bakery"} else lock.hold()
+            with context:
+                counter += 1
+
+    threads = [threading.Thread(target=worker, args=(i,), name=f"{algorithm}-worker-{i}") for i in range(participants)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    expected = participants * increments_per_participant
+    return {"algorithm": algorithm, "participants": participants,
+            "increments_per_participant": increments_per_participant,
+            "expected_total": expected, "actual_total": counter}
