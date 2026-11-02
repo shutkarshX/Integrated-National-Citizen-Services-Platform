@@ -14,7 +14,7 @@ def run_producer_consumer(items: int = 20, capacity: int = 5) -> dict[str, int |
     if capacity < 1:
         raise ValueError("capacity must be >= 1")
 
-    buffer: deque[int] = deque()
+    buffer: deque[int | None] = deque()
     condition = threading.Condition()
     consumed: list[int] = []
 
@@ -26,6 +26,8 @@ def run_producer_consumer(items: int = 20, capacity: int = 5) -> dict[str, int |
                 buffer.append(item)
                 condition.notify_all()
         with condition:
+            while len(buffer) >= capacity:
+                condition.wait()
             buffer.append(None)  # sentinel: producer has finished
             condition.notify_all()
 
