@@ -28,7 +28,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 - [ ] Loading, linking and address binding.
 - [x] Locally verified: fixed/variable partitions and First Fit, Best Fit, Worst Fit (44-test run; allocation demos completed).
-- [x] Source added, local verification pending: paging, segmentation and segmented-paging address translation.
+- [x] Locally verified: paging, segmentation and segmented-paging address translation (3 CLI demonstrations; full suite passed 55 tests).
 - [ ] Demand paging and FIFO, LRU, Optimal, LFU page replacement.
 - [ ] Belady's anomaly and thrashing.
 - [ ] File access, file allocation and disk scheduling.
@@ -38,7 +38,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 - Full local test suite after deadlock implementation: 32 tests passed, 0 failures, 0 errors (0.242 seconds).
 - Memory allocation locally verified on 2026-11-03: compilation passed; fixed-partition comparison and all three variable-partition strategies completed; full suite passed 44 tests with 0 failures and 0 errors.
-- Paging, segmentation and segmented-paging source and tests have been committed; local execution is pending.
+- Paging, segmentation and segmented-paging locally verified on 2026-11-03: all three CLI demonstrations completed; full suite passed 55 tests with 0 failures and 0 errors.
 - CLI help command executed successfully and listed all six deadlock commands.
 - All six deadlock CLI demonstrations executed successfully on the project owner's Ubuntu machine on 2026-11-03.
 - Exact outputs are recorded in `phase-2/docs/EVIDENCE_LOG.md`.
