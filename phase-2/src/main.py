@@ -4,7 +4,8 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
-from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo\nfrom citizen_os.deadlock import (
+from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo
+from citizen_os.deadlock import (
     database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
     resource_allocation_graph_demo, run_bankers_demo,
 )
