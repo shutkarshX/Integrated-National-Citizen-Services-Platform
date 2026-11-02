@@ -8,7 +8,7 @@ class MultilevelSchedulerTests(unittest.TestCase):
     def test_mlq_keeps_fixed_priority_queues_and_completes(self):
         jobs=[ServiceProcess(1,"A","General",4,0,2),ServiceProcess(2,"B","Urgent",2,1,1)]
         result=multilevel_queue(jobs,quantum=2)
-        self.assertEqual(result.timeline,[(1,0,1),(2,1,3),(1,3,5)])
+        self.assertEqual(result.timeline,[(1,0,1),(2,1,3),(1,3,5),(1,5,6)])
         self.assertTrue(all(p.state==ProcessState.TERMINATED for p in result.processes))
 
     def test_mlq_rejects_invalid_quantum(self):
