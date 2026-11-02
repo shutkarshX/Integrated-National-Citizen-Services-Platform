@@ -5,98 +5,80 @@ Record only genuine runs performed on the project machine. The following results
 ## Environment
 
 - Machine: project owner's Ubuntu desktop.
-- Python: Python 3.14 (identified from the local Python standard-library traceback during initial test discovery).
+- Python: Python 3.14.
 - Working directory: repository root, `Integrated-National-Citizen-Services-Platform`.
 - Branch: `phase-2/concurrency-memory`.
 
-## Race-condition demonstration
+## Previously verified demonstrations
+
+The race condition, mutex, Peterson, Strict Alternation, Lamport Bakery, Test-and-Set-style lock, bounded-buffer Producer–Consumer and parent-child Pipe IPC results are retained in the preceding history of this log. Their source code and earlier execution records remain unchanged.
+
+## Semaphore demonstrations
+
+Binary semaphore command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py semaphore-demo --workers 6 --permits 1
+```
+
+Observed: 120 operations expected and completed; maximum simultaneous operations: 1.
+
+Counting semaphore command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py semaphore-demo --workers 6 --permits 3
+```
+
+Observed: 120 operations expected and completed; maximum simultaneous operations: 3.
+
+## Readers–Writers monitor
 
 Command:
 
 ```bash
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py race-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py readers-writers --readers 4 --writers 2 --iterations 10
 ```
 
-Observed output:
+Observed:
 
 ```text
-workers: 2
-increments_per_worker: 100
-expected_total: 200
-actual_total: 100
-lost_updates: 100
+reads_completed: 40
+writes_completed: 20
+maximum_simultaneous_readers: 4
+synchronization_violations: 0
 ```
 
-Interpretation: the controlled unsynchronized read-modify-write demonstrates 100 lost updates in this run.
-
-## Mutex-protected counter
+## Dining Philosophers
 
 Command:
 
 ```bash
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py locked-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py dining-philosophers --philosophers 5 --meals 3
 ```
 
-Observed output:
+Observed: 5 philosophers; 3 meals each; 15 expected and 15 completed.
 
-```text
-workers: 4
-increments_per_worker: 1000
-expected_total: 4000
-actual_total: 4000
-```
-
-## Mutual-exclusion algorithm demonstrations
-
-| Algorithm | Participants | Increments per participant | Expected total | Actual total |
-|---|---:|---:|---:|---:|
-| Peterson | 2 | 500 | 1,000 | 1,000 |
-| Strict alternation | 2 | 500 | 1,000 | 1,000 |
-| Lamport Bakery | 4 | 500 | 2,000 | 2,000 |
-| Test-and-Set-style lock | 4 | 500 | 2,000 | 2,000 |
-
-Each demonstration completed and printed the expected and actual totals as equal. The Test-and-Set-style example uses Python's `threading.Lock.acquire(blocking=False)` as a user-space primitive; it does not invoke a hardware atomic Test-and-Set instruction.
-
-## Producer–Consumer bounded-buffer demonstration
+## Sleeping Barber
 
 Command:
 
 ```bash
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py producer-consumer --items 20 --capacity 5
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py sleeping-barber --customers 10 --chairs 3
 ```
 
-Observed output:
+Observed:
 
 ```text
-items_requested: 20
-items_consumed: 20
-buffer_capacity: 5
-expected_sum: 210
-consumed_sum: 210
-buffer_empty: True
+customers: 10
+waiting_chairs: 3
+served: 4
+turned_away: 6
+accounted_for: 10
 ```
 
-The run transferred all 20 items, the sum matched the expected sum, and the buffer was empty after completion.
+The served/turned-away split depends on thread scheduling and is not a fixed expected result. The important invariant in this run is that served plus turned away equals all 10 customers.
 
-## Parent-child IPC demonstration
-
-Command:
-
-```bash
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py ipc-demo --message "hello from parent"
-```
-
-Observed output:
-
-```text
-sent: hello from parent
-received: hello from parent
-response: HELLO FROM PARENT
-```
-
-The parent sent a message through a multiprocessing Pipe, the child received it and returned the uppercase response.
-
-## Automated tests
+## Full automated test suite
 
 Command:
 
@@ -107,15 +89,15 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 Observed result:
 
 ```text
-Ran 13 tests in 0.236s
+Ran 20 tests in 0.245s
 
 OK
 ```
 
-All 13 tests reported `ok`; zero failures and zero errors. This includes eight tests in `test_concurrency.py` and five tests in `test_synchronization.py`.
+All 20 tests reported `ok`; zero failures and zero errors. The suite includes the original concurrency tests, bounded-buffer / IPC tests, and semaphore / monitor / classical-problem tests.
 
 ## Evidence limitations
 
-- These results verify the implemented concurrency, bounded-buffer and Pipe IPC demonstrations and their current tests.
-- They do not verify unfinished Module 3 topics or any Module 4 topic.
+- These results verify the implemented concurrency, synchronization, bounded-buffer and Pipe IPC demonstrations and their current tests.
+- Deadlock algorithms and Module 4 memory-management topics remain unimplemented/unverified.
 - No screenshots or terminal-output attachments have been committed yet.
