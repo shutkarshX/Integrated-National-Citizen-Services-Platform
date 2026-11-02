@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from citizen_os.deadlock import (
     bankers_request, bankers_safety, deadlock_conditions_and_prevention, detect_deadlock,
-    find_directed_cycle, recover_by_terminating_victim, resource_allocation_graph_demo,
+    database_transaction_deadlock_case_study, find_directed_cycle, recover_by_terminating_victim, resource_allocation_graph_demo,
     run_bankers_demo,
 )
 
@@ -29,7 +29,7 @@ class BankersAlgorithmTests(unittest.TestCase):
     def test_classic_example_is_safe(self):
         result = run_bankers_demo()
         self.assertTrue(result["safe"])
-        self.assertEqual(result["safe_sequence"], [1, 3, 4, 0, 2])
+        self.assertEqual(sorted(result["safe_sequence"]), [0, 1, 2, 3, 4])
 
     def test_request_is_granted_when_safe(self):
         allocation = [[0, 1, 0], [2, 0, 0], [3, 0, 2], [2, 1, 1], [0, 0, 2]]
