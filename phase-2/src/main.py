@@ -4,7 +4,11 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
-from citizen_os.deadlock import (\n    database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,\n    resource_allocation_graph_demo, run_bankers_demo,\n)\nfrom citizen_os.concurrency.patterns import (
+from citizen_os.deadlock import (
+    database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
+    resource_allocation_graph_demo, run_bankers_demo,
+)
+from citizen_os.concurrency.patterns import (
     run_dining_philosophers, run_readers_writers, run_semaphore_demo, run_sleeping_barber,
 )
 
