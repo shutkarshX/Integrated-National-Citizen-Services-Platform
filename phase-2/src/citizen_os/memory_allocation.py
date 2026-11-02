@@ -57,12 +57,23 @@ def allocate_fixed_partitions(partition_sizes: Sequence[int], process_sizes: Seq
 
 
 def allocate_variable_partitions(memory_size: int, process_sizes: Sequence[int],
-                                 strategy: str = "first-fit") -> dict[str, object]:
+                                 strategy: str = "first-fit",
+                                 initial_holes: Sequence[tuple[int, int]] | None = None) -> dict[str, object]:
     """Allocate variable-sized contiguous blocks by splitting the selected free hole."""
     _validate_sizes([memory_size], "memory_size")
     _validate_sizes(process_sizes, "process_sizes", allow_empty=True)
     _validate_strategy(strategy)
-    holes: list[dict[str, int]] = [{"start": 0, "size": memory_size}]
+    if initial_holes is None:
+        holes: list[dict[str, int]] = [{"start": 0, "size": memory_size}]
+    else:
+        holes = []
+        for start, size in initial_holes:
+            if not isinstance(start, int) or not isinstance(size, int) or start < 0 or size <= 0 or start + size > memory_size:
+                raise ValueError("initial holes must have positive sizes and lie within memory_size")
+            holes.append({"start": start, "size": size})
+        holes.sort(key=lambda item: item["start"])
+        if not holes or any(holes[i]["start"] + holes[i]["size"] > holes[i + 1]["start"] for i in range(len(holes) - 1)):
+            raise ValueError("initial_holes must be non-empty, non-overlapping free regions")
     allocations: list[dict[str, int]] = []
     unallocated: list[int] = []
 
@@ -112,4 +123,4 @@ def run_fixed_partition_demo() -> dict[str, object]:
 
 
 def run_variable_partition_demo(strategy: str = "first-fit") -> dict[str, object]:
-    return allocate_variable_partitions(1000, [212, 417, 112, 426], strategy)
+    # Three non-contiguous holes make the placement policies visibly different.\n    return allocate_variable_partitions(1000, [180, 250, 90], strategy,\n                                        initial_holes=[(0, 200), (300, 500), (900, 100)])
