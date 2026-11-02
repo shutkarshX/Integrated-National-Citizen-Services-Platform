@@ -38,7 +38,22 @@ PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strateg
 PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
-These are user-space educational simulations, not kernel memory allocators. This slice has been committed but awaits local execution and test verification.
+These are user-space educational simulations, not kernel memory allocators. This slice has been locally verified on 2026-11-03: the three allocation strategy commands completed and all 44 tests passed.
+
+## Address translation source added
+
+The next Module 4 slice adds logical-to-physical address translation demonstrations for paging, segmentation and segmented paging. Paging uses a page table to map a logical page to a physical frame. Segmentation uses a segment base and limit. Segmented paging first selects a segment and then consults that segment's page table.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py paging-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py segmentation-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py segmented-paging-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+These are user-space teaching simulations of address translation, not hardware MMU implementations. The code and tests are committed; local execution is pending.
 
 ## Remaining scope
 
