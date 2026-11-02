@@ -92,3 +92,23 @@ For the final academic evidence pack, capture genuine screenshots from the Ubunt
 4. the Round Robin schedule and metrics.
 
 Do not fabricate or recreate screenshots from this text summary.
+
+## 7. Multilevel Queue (MLQ) scheduling
+
+Command: `python3 phase-1/src/main.py schedule --algorithm mlq --quantum 2`
+
+User-provided Ubuntu output showed all four sample processes completed. Average waiting time: 5.00. Average turnaround time: 10.00. The observed timeline was `P101[0-1] -> P102[1-3] -> P102[3-4] -> P101[4-6] -> P104[6-8] -> P101[8-10] -> P104[10-12] -> P103[12-14] -> P103[14-16] -> P103[16-18] -> P103[18-20]`.
+
+## 8. Multilevel Feedback Queue (MLFQ) scheduling
+
+Command: `python3 phase-1/src/main.py schedule --algorithm mlfq`
+
+User-provided Ubuntu output showed all four sample processes completed. Average waiting time: 8.75. Average turnaround time: 13.75. The observed timeline was `P101[0-2] -> P102[2-4] -> P103[4-6] -> P104[6-8] -> P101[8-11] -> P102[11-12] -> P103[12-16] -> P104[16-18] -> P103[18-20]`.
+
+## 9. Updated automated test suite
+
+Command: `python3 -m unittest discover -s phase-1/tests -v`
+
+Observed result: 17 tests ran in 0.028 seconds; final status `OK`. This includes the four new MLQ/MLFQ tests. The user initially encountered one incorrect expected-timeline assertion in the MLQ test; after pulling the corrected test expectation, the full suite passed 17/17.
+
+These records summarize terminal output supplied by the user. Genuine terminal screenshots are still required for the final evidence pack.
