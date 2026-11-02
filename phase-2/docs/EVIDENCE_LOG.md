@@ -1,6 +1,6 @@
 # Phase 2 Evidence Log
 
-Record only genuine runs performed on the project machine. The following results were supplied from an actual local run on 2026-11-03.
+Record only genuine runs performed on the project machine. The following results were supplied from actual local runs on 2026-11-03.
 
 ## Environment
 
@@ -57,6 +57,45 @@ actual_total: 4000
 
 Each demonstration completed and printed the expected and actual totals as equal. The Test-and-Set-style example uses Python's `threading.Lock.acquire(blocking=False)` as a user-space primitive; it does not invoke a hardware atomic Test-and-Set instruction.
 
+## Producer–Consumer bounded-buffer demonstration
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py producer-consumer --items 20 --capacity 5
+```
+
+Observed output:
+
+```text
+items_requested: 20
+items_consumed: 20
+buffer_capacity: 5
+expected_sum: 210
+consumed_sum: 210
+buffer_empty: True
+```
+
+The run transferred all 20 items, the sum matched the expected sum, and the buffer was empty after completion.
+
+## Parent-child IPC demonstration
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py ipc-demo --message "hello from parent"
+```
+
+Observed output:
+
+```text
+sent: hello from parent
+received: hello from parent
+response: HELLO FROM PARENT
+```
+
+The parent sent a message through a multiprocessing Pipe, the child received it and returned the uppercase response.
+
 ## Automated tests
 
 Command:
@@ -68,15 +107,15 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 Observed result:
 
 ```text
-Ran 8 tests in 0.162s
+Ran 13 tests in 0.236s
 
 OK
 ```
 
-All eight tests reported `ok`; zero failures and zero errors.
+All 13 tests reported `ok`; zero failures and zero errors. This includes eight tests in `test_concurrency.py` and five tests in `test_synchronization.py`.
 
 ## Evidence limitations
 
-- These results verify the current concurrency demonstrations and the eight tests in `phase-2/tests/test_concurrency.py`.
+- These results verify the implemented concurrency, bounded-buffer and Pipe IPC demonstrations and their current tests.
 - They do not verify unfinished Module 3 topics or any Module 4 topic.
 - No screenshots or terminal-output attachments have been committed yet.
