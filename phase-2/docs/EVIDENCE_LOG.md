@@ -96,8 +96,112 @@ OK
 
 All 20 tests reported `ok`; zero failures and zero errors. The suite includes the original concurrency tests, bounded-buffer / IPC tests, and semaphore / monitor / classical-problem tests.
 
+
+## Deadlock management demonstrations — locally verified 2026-11-03
+
+The project owner pulled the deadlock implementation and ran the CLI help, all six demonstrations, and the complete automated test suite on the Ubuntu project machine.
+
+CLI syntax/help command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py --help
+```
+
+Observed: command completed successfully and listed `rag-demo`, `banker-demo`, `deadlock-detection`, `deadlock-prevention`, `deadlock-recovery`, and `database-deadlock`.
+
+### Resource Allocation Graph
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py rag-demo`
+
+Observed:
+```text
+cycle_detected: True
+cycle: ['P1', 'R2', 'P2', 'R1', 'P1']
+```
+
+This example uses single-instance resource types, for which a cycle indicates deadlock.
+
+### Banker's Algorithm
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py banker-demo`
+
+Observed:
+```text
+safe: True
+safe_sequence: [1, 3, 0, 2, 4]
+need: [[7, 4, 3], [1, 2, 2], [6, 0, 0], [0, 1, 1], [4, 3, 1]]
+work_at_end: [10, 5, 7]
+```
+
+The observed safe sequence differs from other valid sequences for the classic example; it is valid because the algorithm found a completion order in which each process's remaining need could be met.
+
+### Multi-instance deadlock detection
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py deadlock-detection`
+
+Observed:
+```text
+deadlock_detected: True
+deadlocked_processes: [0, 1]
+finish: [False, False]
+work_at_end: [0, 0]
+```
+
+### Coffman conditions and prevention
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py deadlock-prevention`
+
+Observed: all four necessary conditions were printed (mutual exclusion, hold and wait, no preemption, circular wait), together with a corresponding prevention strategy for each.
+
+### Deadlock recovery
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py deadlock-recovery`
+
+Observed:
+```text
+victim_process: 1
+released_resources: [0, 3]
+policy: terminate the deadlocked process holding the largest total allocation
+```
+
+This is an illustrative victim-selection policy, not a universal OS policy.
+
+### Database transaction deadlock
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py database-deadlock`
+
+Observed:
+```text
+transactions: ['T1', 'T2']
+locks_held: {'T1': 'Row-A', 'T2': 'Row-B'}
+waiting_for: {'T1': 'Row-B (held by T2)', 'T2': 'Row-A (held by T1)'}
+deadlock_detected: True
+wait_for_cycle: ['T1', 'T2', 'T1']
+```
+
+The case study models two transactions holding one row lock each and waiting for the other's lock; rolling back one transaction releases its locks.
+
+### Updated full test suite
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed result:
+
+```text
+Ran 32 tests in 0.242s
+
+OK
+```
+
+All 32 tests reported `ok`; zero failures and zero errors. The CLI help and all six deadlock commands also completed successfully.
+
 ## Evidence limitations
 
 - These results verify the implemented concurrency, synchronization, bounded-buffer and Pipe IPC demonstrations and their current tests.
-- Deadlock algorithms and Module 4 memory-management topics remain unimplemented/unverified.
+- Deadlock management algorithms and CLI demonstrations are locally verified as recorded above.
+- Module 4 memory-management topics remain unimplemented/unverified.
 - No screenshots or terminal-output attachments have been committed yet.
