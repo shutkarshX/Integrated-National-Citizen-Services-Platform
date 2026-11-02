@@ -205,3 +205,53 @@ All 32 tests reported `ok`; zero failures and zero errors. The CLI help and all 
 - Deadlock management algorithms and CLI demonstrations are locally verified as recorded above.
 - Module 4 memory-management topics remain unimplemented/unverified.
 - No screenshots or terminal-output attachments have been committed yet.
+
+
+## Memory allocation — locally verified 2026-11-03
+
+The project owner pulled commit `f402b53`, compiled the memory-allocation module and CLI entry point, ran the fixed-partition comparison, ran variable-partition First Fit, Best Fit and Worst Fit, and ran the full test suite.
+
+Compilation command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/memory_allocation.py phase-2/src/main.py
+```
+
+Observed: compilation completed with no errors.
+
+Fixed-partition comparison completed for First Fit, Best Fit and Worst Fit. In this sample, First Fit and Worst Fit each left one process unallocated; Best Fit allocated all four. Internal fragmentation totals observed were 559, 433 and 659 units respectively.
+
+Variable-partition commands:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strategy first-fit
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strategy best-fit
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strategy worst-fit
+```
+
+Observed comparison:
+
+- First Fit: 280 units total free; largest hole 160; external fragmentation 120.
+- Best Fit: 280 units total free; largest hole 250; external fragmentation 30.
+- Worst Fit: 280 units total free; largest hole 110; external fragmentation 170.
+
+All three strategies allocated the three sample processes. These values are specific to the demonstration's initial holes and process sequence.
+
+Updated full test suite:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed: `Ran 44 tests in 0.241s`, `OK`; zero failures and zero errors. The 44 tests include the memory-allocation tests as well as the earlier concurrency, synchronization and deadlock tests.
+
+## Paging and segmentation — source added, local verification pending
+
+Added `phase-2/src/citizen_os/address_translation.py` and `phase-2/tests/test_address_translation.py`.
+
+The module demonstrates:
+- Paging: logical page number and offset calculation, page-table lookup, and physical-address construction.
+- Segmentation: segment selection, base-plus-offset translation, and limit checking.
+- Segmented paging: segment selection followed by page-table lookup and frame-plus-offset translation.
+
+These are educational address-translation simulations, not actual hardware MMU or kernel implementations. The new test cases and CLI commands have not yet been run locally by the project owner.
