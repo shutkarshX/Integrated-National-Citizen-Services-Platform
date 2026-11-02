@@ -1,15 +1,16 @@
 # Phase 1 Implementation Status
 
-This records the initial source-code drop, not a final report or proof of local execution.
+This tracker distinguishes source implementation from execution evidence. It is not the final academic report.
 
-| Item | Status | Verification evidence |
+| Item | Status | Evidence |
 |---|---|---|
-| Application-level process model and PCB-like metadata | Source added; local test pending | test_models.py |
-| FCFS, SJF, non-preemptive Priority, SRTF and Round Robin | Source added; local test pending | test_scheduler.py and CLI runs |
-| Linux host inspection | Source added; local run pending | main.py system screenshot |
-| Bash host audit | Script added; local run pending | linux_audit.sh screenshot |
+| Application-level process model and PCB-like metadata | Implemented; 3 model tests passed locally | User-provided Ubuntu test output |
+| FCFS, SJF, non-preemptive Priority, SRTF and Round Robin | Implemented; 7 scheduler tests passed locally | User-provided Ubuntu test output |
+| Full current unit-test suite | **10/10 passed** | `python3 -m unittest discover -s phase-1/tests -v`; 10 tests, 0.001s, OK (reported by user) |
+| Linux host inspection | Source added; actual command run pending | `python3 phase-1/src/main.py system` |
+| Bash host audit | Script added; actual command run pending | `bash phase-1/scripts/linux_audit.sh` |
 | Threads and multithreading | Not implemented | Pending |
 | Multilevel Queue / Multilevel Feedback Queue | Not implemented | Pending |
-| OS fundamentals and RTOS case-study notes | Pending | Study notes and sources |
+| OS fundamentals, Linux CLI practice and RTOS case-study evidence | Documentation / practical evidence pending | Pending |
 
-Do not mark local tests passed until they have actually run on the Linux machine.
+The 10 passing tests verify the process model and scheduling simulations only. They do not verify the Linux host-inspection command or Bash audit script. Do not claim those as tested until their commands have actually run.
