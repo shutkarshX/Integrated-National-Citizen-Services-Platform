@@ -27,7 +27,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 ## Module 4 — Memory Management
 
 - [ ] Loading, linking and address binding.
-- [ ] Fixed/variable partitions and First Fit, Best Fit, Worst Fit.
+- [x] Source added, local verification pending: fixed/variable partitions and First Fit, Best Fit, Worst Fit.
 - [ ] Paging, segmentation and segmented paging.
 - [ ] Demand paging and FIFO, LRU, Optimal, LFU page replacement.
 - [ ] Belady's anomaly and thrashing.
@@ -37,7 +37,9 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 ## Verification record
 
 - Full local test suite after deadlock implementation: 32 tests passed, 0 failures, 0 errors (0.242 seconds).
+- Memory allocation implementation and its new tests have been committed; local execution and the updated full test suite are pending.
 - CLI help command executed successfully and listed all six deadlock commands.
 - All six deadlock CLI demonstrations executed successfully on the project owner's Ubuntu machine on 2026-11-03.
 - Exact outputs are recorded in `phase-2/docs/EVIDENCE_LOG.md`.
 - Detailed verified synchronization evidence is recorded in `phase-2/docs/EVIDENCE_LOG.md`.
+- Do not mark memory allocation verified until the four allocation commands and updated full test suite have been run locally.
