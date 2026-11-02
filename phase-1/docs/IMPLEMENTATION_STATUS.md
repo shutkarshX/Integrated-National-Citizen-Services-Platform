@@ -5,7 +5,7 @@ This tracker distinguishes source implementation from execution evidence. It is 
 | Item | Status | Evidence |
 |---|---|---|
 | Application-level process model and PCB-like metadata | Implemented; 3 model tests passed locally | User-provided Ubuntu test output |
-| FCFS, SJF, non-preemptive Priority, SRTF and Round Robin | Implemented; 7 scheduler tests passed locally | User-provided Ubuntu test output |
+| FCFS, SJF, non-preemptive Priority, SRTF, Round Robin, MLQ and MLFQ | Implemented; 7 scheduler tests passed locally | User-provided Ubuntu test output |
 | Full automated test suite | **13/13 passed** | `python3 -m unittest discover -s phase-1/tests -v`; 13 tests, 0.028s, OK |
 | Linux host inspection | **Executed successfully on Ubuntu 26.04 LTS** | `python3 phase-1/src/main.py system`; output recorded in `LINUX_EXECUTION_EVIDENCE.md` |
 | Bash host audit | **Executed successfully** | `bash phase-1/scripts/linux_audit.sh`; output recorded in `LINUX_EXECUTION_EVIDENCE.md` |
