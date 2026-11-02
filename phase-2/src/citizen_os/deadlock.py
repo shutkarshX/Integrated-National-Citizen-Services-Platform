@@ -176,3 +176,16 @@ def run_bankers_demo() -> dict[str, object]:
     maximum = [[7, 5, 3], [3, 2, 2], [9, 0, 2], [2, 2, 2], [4, 3, 3]]
     available = [3, 3, 2]
     return bankers_safety(allocation, maximum, available)
+
+def database_transaction_deadlock_case_study() -> dict[str, object]:
+    """Model two database transactions holding one row lock and waiting for the other."""
+    wait_for = {"T1": ["T2"], "T2": ["T1"]}
+    cycle = find_directed_cycle(wait_for)
+    return {
+        "transactions": ["T1", "T2"],
+        "locks_held": {"T1": "Row-A", "T2": "Row-B"},
+        "waiting_for": {"T1": "Row-B (held by T2)", "T2": "Row-A (held by T1)"},
+        "deadlock_detected": cycle is not None,
+        "wait_for_cycle": cycle or [],
+        "possible_resolution": "Abort or roll back one transaction, release its locks, then retry it.",
+    }
