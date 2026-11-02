@@ -42,10 +42,10 @@ class VariablePartitionTests(unittest.TestCase):
 
     def test_best_and_worst_fit_select_different_holes(self):
         # After the first allocation, the free regions are 200 and 500 bytes.
-        sizes = [300, 200, 500]
-        processes = [300, 180, 150]
-        best = allocate_variable_partitions(1000, processes, "best-fit")
-        worst = allocate_variable_partitions(1000, processes, "worst-fit")
+        processes = [180, 250, 90]
+        holes = [(0, 200), (300, 500), (900, 100)]
+        best = allocate_variable_partitions(1000, processes, "best-fit", holes)
+        worst = allocate_variable_partitions(1000, processes, "worst-fit", holes)
         self.assertNotEqual(best["allocations"][1]["start"], worst["allocations"][1]["start"])
 
     def test_unallocated_process_is_reported(self):
@@ -63,6 +63,8 @@ class VariablePartitionTests(unittest.TestCase):
             allocate_variable_partitions(0, [10])
         with self.assertRaises(ValueError):
             allocate_variable_partitions(100, [10], "invalid")
+        with self.assertRaises(ValueError):
+            allocate_variable_partitions(100, [10], initial_holes=[(0, 70), (60, 20)])
 
 
 class MemoryAllocationDemoTests(unittest.TestCase):
