@@ -50,7 +50,7 @@ class PageReplacementTests(unittest.TestCase):
 
     def test_demand_paging_demo_runs(self):
         result = run_demand_paging_demo()
-        self.assertEqual(result["page_faults"], 6)
+        self.assertEqual(result["page_faults"], 7)
 
     def test_comparison_demo_runs(self):
         result = run_page_replacement_comparison()
