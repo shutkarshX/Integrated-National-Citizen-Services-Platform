@@ -4,7 +4,7 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
-from citizen_os.deadlock import (\n    deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,\n    resource_allocation_graph_demo, run_bankers_demo,\n)\nfrom citizen_os.concurrency.patterns import (
+from citizen_os.deadlock import (\n    database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,\n    resource_allocation_graph_demo, run_bankers_demo,\n)\nfrom citizen_os.concurrency.patterns import (
     run_dining_philosophers, run_readers_writers, run_semaphore_demo, run_sleeping_barber,
 )
 
@@ -46,6 +46,7 @@ def main() -> None:
     sub.add_parser("deadlock-detection", help="run a multi-instance deadlock detection example")
     sub.add_parser("deadlock-prevention", help="list Coffman conditions and prevention strategies")
     sub.add_parser("deadlock-recovery", help="demonstrate victim selection and resource release")
+    sub.add_parser("database-deadlock", help="show a two-transaction database lock cycle")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -87,6 +88,9 @@ def main() -> None:
     elif args.command == "deadlock-recovery":
         result = recover_by_terminating_victim([[1, 0], [0, 3]], [0, 1])
         label = "Deadlock recovery demonstration (largest-allocation victim policy)"
+    elif args.command == "database-deadlock":
+        result = database_transaction_deadlock_case_study()
+        label = "Database transaction deadlock case study (wait-for graph)"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
