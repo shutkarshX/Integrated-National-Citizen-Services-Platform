@@ -29,8 +29,8 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [ ] Loading, linking and address binding.
 - [x] Locally verified: fixed/variable partitions and First Fit, Best Fit, Worst Fit (44-test run; allocation demos completed).
 - [x] Locally verified: paging, segmentation and segmented-paging address translation (3 CLI demonstrations; full suite passed 55 tests).
-- [ ] Demand paging and FIFO, LRU, Optimal, LFU page replacement.
-- [ ] Belady's anomaly and thrashing.
+- [x] Source added, local verification pending: demand paging and FIFO, LRU, Optimal, LFU page replacement.
+- [x] Source added, local verification pending: Belady's anomaly demonstration.
 - [ ] File access, file allocation and disk scheduling.
 - [ ] Virtual machines, hypervisors, GPU and CUDA introduction.
 
