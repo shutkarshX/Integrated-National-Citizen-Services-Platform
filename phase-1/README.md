@@ -26,4 +26,4 @@ These are user-space educational simulations. They do not create or inspect kern
 No third-party Python packages are required. Capture screenshots from the actual Linux machine after running these commands. Do not use illustrative output as evidence.
 
 ## Not yet implemented / not claimed complete
-Thread execution and multithreading models, real process creation with fork/exec, IPC, synchronization, multilevel scheduling, and RTOS implementation are not part of this initial source drop. Module 1 theory (interrupts, system calls, kernel architecture, OS generations/types) and Module 2 theory/case study still require documented study and evidence.
+Real process and thread demonstrations plus MLQ/MLFQ scheduling are now included. IPC, synchronization primitives beyond the thread-lock demonstration, and RTOS implementation remain pending. Module 1 theory (interrupts, system calls, kernel architecture, OS generations/types) and Module 2 theory/case study still require documented study and evidence. Module 1 theory (interrupts, system calls, kernel architecture, OS generations/types) and Module 2 theory/case study still require documented study and evidence.
