@@ -255,3 +255,72 @@ The module demonstrates:
 - Segmented paging: segment selection followed by page-table lookup and frame-plus-offset translation.
 
 These are educational address-translation simulations, not actual hardware MMU or kernel implementations. The new test cases and CLI commands have not yet been run locally by the project owner.
+
+
+## Paging, segmentation and segmented paging — locally verified 2026-11-03
+
+The project owner pulled the address-translation implementation and ran all three CLI demonstrations and the complete test suite.
+
+### Paging
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py paging-demo
+```
+
+Observed:
+- Page size: 1024 bytes.
+- Logical address: 2500.
+- Page number: 2; offset: 452.
+- Page table maps page 2 to frame 2.
+- Physical address returned: 2500.
+
+### Segmentation
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py segmentation-demo
+```
+
+Observed:
+- Segment number: 1; offset: 120.
+- Base: 5000; limit: 800.
+- Physical address returned: 5120.
+
+### Segmented paging
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py segmented-paging-demo
+```
+
+Observed:
+- Segment number: 1; offset: 1500.
+- Page number: 1; page offset: 476.
+- Page table maps this page to frame 3.
+- Physical address returned: 3548.
+
+### Updated full automated test suite
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed:
+
+```text
+Ran 55 tests in 0.246s
+
+OK
+```
+
+All 55 tests reported `ok`; zero failures and zero errors. This includes the 10 address-translation tests and all previously implemented tests.
+
+### Scope note
+
+These demonstrations verify educational address-translation logic in user space. They do not implement a hardware MMU or kernel memory-management subsystem.
