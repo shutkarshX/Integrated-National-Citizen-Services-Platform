@@ -4,7 +4,7 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
-from citizen_os.deadlock import (
+from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo\nfrom citizen_os.deadlock import (
     database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
     resource_allocation_graph_demo, run_bankers_demo,
 )
@@ -51,6 +51,9 @@ def main() -> None:
     sub.add_parser("deadlock-prevention", help="list Coffman conditions and prevention strategies")
     sub.add_parser("deadlock-recovery", help="demonstrate victim selection and resource release")
     sub.add_parser("database-deadlock", help="show a two-transaction database lock cycle")
+    sub.add_parser("fixed-partitions", help="compare first, best and worst fit for fixed partitions")
+    variable = sub.add_parser("variable-partitions", help="run variable-partition allocation with a fit strategy")
+    variable.add_argument("--strategy", choices=["first-fit", "best-fit", "worst-fit"], default="first-fit")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -95,6 +98,12 @@ def main() -> None:
     elif args.command == "database-deadlock":
         result = database_transaction_deadlock_case_study()
         label = "Database transaction deadlock case study (wait-for graph)"
+    elif args.command == "fixed-partitions":
+        result = run_fixed_partition_demo()
+        label = "Fixed partition allocation comparison"
+    elif args.command == "variable-partitions":
+        result = run_variable_partition_demo(args.strategy)
+        label = f"Variable partition allocation: {args.strategy}"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
