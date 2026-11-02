@@ -19,6 +19,11 @@ class ResourceAllocationGraphTests(unittest.TestCase):
     def test_acyclic_graph_has_no_cycle(self):
         self.assertIsNone(find_directed_cycle({"P1": ["R1"], "R1": ["P2"], "P2": []}))
 
+    def test_database_transaction_case_study_has_wait_for_cycle(self):
+        result = database_transaction_deadlock_case_study()
+        self.assertTrue(result["deadlock_detected"])
+        self.assertEqual(result["wait_for_cycle"][0], result["wait_for_cycle"][-1])
+
 
 class BankersAlgorithmTests(unittest.TestCase):
     def test_classic_example_is_safe(self):
