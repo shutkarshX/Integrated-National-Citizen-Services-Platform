@@ -69,8 +69,8 @@ PYTHONPATH=phase-2/src python3 phase-2/src/main.py belady-anomaly-demo
 PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
-These are user-space educational simulations, not kernel virtual-memory implementations. Local verification is pending.
+These are user-space educational simulations, not kernel virtual-memory implementations. The demand-paging, four-algorithm comparison and Belady anomaly demonstrations were locally verified on 2026-11-03; the complete suite passed 67 tests with 0 failures and 0 errors.
 
 ## Remaining scope
 
-Loading/linking/address binding, paging/segmentation, virtual memory and page replacement, file and disk management, virtualization, and GPU/CUDA introduction remain pending.
+Loading/linking/address binding, paging/segmentation, thrashing, file and disk management, virtualization, and GPU/CUDA introduction remain pending. Loading/linking/address binding also remains pending.
