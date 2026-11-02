@@ -53,7 +53,7 @@ PYTHONPATH=phase-2/src python3 phase-2/src/main.py segmented-paging-demo
 PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
-These are user-space teaching simulations of address translation, not hardware MMU implementations. The code and tests are committed; local execution is pending.
+These are user-space teaching simulations of address translation, not hardware MMU implementations. The three CLI demonstrations and complete 55-test suite were locally verified on 2026-11-03.
 
 ## Remaining scope
 
