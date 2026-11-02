@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 from citizen_os.linux_info import collect_system_info
-from citizen_os.scheduler import fcfs,sjf,srtf,priority,round_robin
+from citizen_os.scheduler import fcfs,sjf,srtf,priority,round_robin,multilevel_queue,multilevel_feedback_queue
 from citizen_os.service_desk import sample_requests
 from citizen_os.process_demo import run_process_demo
 from citizen_os.thread_demo import run_thread_demo
@@ -13,7 +13,7 @@ def main():
     sub.add_parser("process-demo",help="launch and monitor real child processes")
     sub.add_parser("thread-demo",help="run concurrent service workers with a lock")
     sch=sub.add_parser("schedule",help="simulate CPU scheduling")
-    sch.add_argument("--algorithm",choices=["fcfs","sjf","srtf","priority","rr"],default="fcfs")
+    sch.add_argument("--algorithm",choices=["fcfs","sjf","srtf","priority","rr","mlq","mlfq"],default="fcfs")
     sch.add_argument("--quantum",type=int,default=2)
     args=parser.parse_args()
     if args.command=="system":
@@ -31,8 +31,8 @@ def main():
         for key,value in result.items(): print(f"{key}: {value}")
         return
     jobs=sample_requests()
-    funcs={"fcfs":fcfs,"sjf":sjf,"srtf":srtf,"priority":priority}
-    result=round_robin(jobs,args.quantum) if args.algorithm=="rr" else funcs[args.algorithm](jobs)
+    funcs={"fcfs":fcfs,"sjf":sjf,"srtf":srtf,"priority":priority,"rr":lambda x:round_robin(x,args.quantum),"mlq":lambda x:multilevel_queue(x,args.quantum),"mlfq":multilevel_feedback_queue}
+    result=funcs[args.algorithm](jobs)
     print(f"\nAlgorithm: {result.algorithm}\nPID | Citizen | Service | Arrival | Burst | Completion | Waiting | Turnaround")
     for p in result.processes: print(f"{p.pid} | {p.citizen_name} | {p.service_name} | {p.arrival_time} | {p.burst_time} | {p.completion_time} | {p.waiting_time} | {p.turnaround_time}")
     print("\nTimeline: "+" -> ".join(f"P{pid}[{start}-{end}]" for pid,start,end in result.timeline))
