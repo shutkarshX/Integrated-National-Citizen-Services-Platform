@@ -24,6 +24,22 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 
 No third-party Python packages are required.
 
-## Pending scope
+## Module 4 — memory allocation source added
 
-Module 4 memory management remains pending: loading/linking/address binding, partition allocation, paging/segmentation, virtual memory and page replacement, file and disk management, virtualization, and GPU/CUDA introduction.
+The first Module 4 slice implements fixed-partition allocation and variable-partition allocation using First Fit, Best Fit and Worst Fit. The fixed-partition model reports internal fragmentation and permits one process per partition. The variable-partition model splits selected free holes and reports remaining free regions and external fragmentation. The variable allocator accepts an optional set of non-overlapping initial free holes so the three placement policies can be compared meaningfully.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py fixed-partitions
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strategy first-fit
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strategy best-fit
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py variable-partitions --strategy worst-fit
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+These are user-space educational simulations, not kernel memory allocators. This slice has been committed but awaits local execution and test verification.
+
+## Remaining scope
+
+Loading/linking/address binding, paging/segmentation, virtual memory and page replacement, file and disk management, virtualization, and GPU/CUDA introduction remain pending.
