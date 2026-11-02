@@ -17,12 +17,12 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: writer-preference Readers–Writers monitor (40 reads, 20 writes, 0 violations).
 - [x] Locally verified: Dining Philosophers (5 philosophers completed 15/15 meals).
 - [x] Locally verified: Sleeping Barber (10 customers; 4 served, 6 turned away in the observed run).
-- [x] Source added, local verification pending: Resource Allocation Graph cycle detection (single-instance example).
-- [x] Source added, local verification pending: Banker's safety algorithm and resource-request safety check.
-- [x] Source added, local verification pending: multi-instance deadlock detection.
-- [x] Source added, local verification pending: deadlock recovery victim selection and resource-release illustration.
-- [x] Source added, local verification pending: Coffman conditions and prevention strategies.
-- [x] Source added, local verification pending: database transaction wait-for graph case study.
+- [x] Locally verified: Resource Allocation Graph cycle detection (single-instance example).
+- [x] Locally verified: Banker's safety algorithm and resource-request safety check.
+- [x] Locally verified: multi-instance deadlock detection.
+- [x] Locally verified: deadlock recovery victim selection and resource-release illustration.
+- [x] Locally verified: Coffman conditions and prevention strategies.
+- [x] Locally verified: database transaction wait-for graph case study.
 
 ## Module 4 — Memory Management
 
@@ -36,7 +36,8 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 ## Verification record
 
-- Previously verified local test suite: 20 tests passed, 0 failures, 0 errors (0.245 seconds).
-- Deadlock algorithms and new tests have been committed but have not yet been executed on the project owner's machine.
-- Do not mark this new slice verified until all six CLI commands and the full test suite have been run locally.
+- Full local test suite after deadlock implementation: 32 tests passed, 0 failures, 0 errors (0.242 seconds).
+- CLI help command executed successfully and listed all six deadlock commands.
+- All six deadlock CLI demonstrations executed successfully on the project owner's Ubuntu machine on 2026-11-03.
+- Exact outputs are recorded in `phase-2/docs/EVIDENCE_LOG.md`.
 - Detailed verified synchronization evidence is recorded in `phase-2/docs/EVIDENCE_LOG.md`.
