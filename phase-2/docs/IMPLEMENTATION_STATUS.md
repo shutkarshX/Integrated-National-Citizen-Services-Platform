@@ -1,19 +1,21 @@
 # Phase 2 Implementation Status
 
-This tracker distinguishes source implementation from execution evidence. Verification status below reflects commands actually run by the project owner on their Ubuntu machine on 2026-11-03.
+This tracker distinguishes source implementation from execution evidence. Verification status reflects commands actually run by the project owner on their Ubuntu machine.
 
 ## Module 3 — Concurrency and Deadlock Management
 
-- [x] Implemented and locally verified: deterministic race-condition demonstration. Observed expected 200, actual 100, lost updates 100.
-- [x] Implemented and locally verified: mutex-protected shared counter. Observed expected 4,000, actual 4,000.
-- [x] Implemented and locally verified: Peterson's Solution (two participants). Observed expected 1,000, actual 1,000.
-- [x] Implemented and locally verified: Strict Alternation (two participants). Observed expected 1,000, actual 1,000. Its progress limitation remains documented.
-- [x] Implemented and locally verified: Lamport's Bakery Algorithm (four participants). Observed expected 2,000, actual 2,000.
-- [x] Implemented and locally verified: Test-and-Set-style spin lock using Python's non-blocking lock acquisition (four participants). Observed expected 2,000, actual 2,000. This is a user-space simulation, not a hardware Test-and-Set instruction.
-- [x] Implemented and locally verified: bounded-buffer Producer–Consumer using a condition variable. Run with 20 items and capacity 5; all 20 items consumed, expected and consumed sums both 210, buffer empty at completion.
-- [x] Implemented and locally verified: parent-child IPC using a multiprocessing Pipe. Message "hello from parent" was received by the child and response "HELLO FROM PARENT" returned.
-- [ ] Counting and binary semaphores; monitors.
-- [ ] Dining philosophers, readers-writers and sleeping barber.
+- [x] Locally verified: deterministic race-condition demonstration (expected 200, actual 100, lost updates 100).
+- [x] Locally verified: mutex-protected counter (expected and actual 4,000).
+- [x] Locally verified: Peterson's Solution (2 participants; expected and actual 1,000).
+- [x] Locally verified: Strict Alternation (2 participants; expected and actual 1,000; progress limitation documented).
+- [x] Locally verified: Lamport's Bakery Algorithm (4 participants; expected and actual 2,000).
+- [x] Locally verified: Test-and-Set-style user-space spin lock (4 participants; expected and actual 2,000; not a hardware instruction).
+- [x] Locally verified: bounded-buffer Producer–Consumer (20 items transferred; sum 210; buffer empty).
+- [x] Locally verified: parent-child IPC using multiprocessing.Pipe (message and uppercase response returned).
+- [x] Source added, local verification pending: binary/counting semaphore concurrency-capacity demonstration.
+- [x] Source added, local verification pending: writer-preference Readers–Writers monitor.
+- [x] Source added, local verification pending: Dining Philosophers using an N-1 admission semaphore.
+- [x] Source added, local verification pending: Sleeping Barber with finite waiting-room capacity.
 - [ ] Deadlock characterization, prevention, avoidance, detection and recovery.
 - [ ] Banker's Algorithm and database transaction case study.
 
@@ -29,9 +31,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 ## Verification record
 
-- Full local test suite: 13 tests passed, 0 failures, 0 errors.
-- Runtime reported by unittest: 0.236 seconds.
-- The 13 tests include the original eight concurrency tests and five Producer–Consumer / IPC tests.
-- CLI demonstrations for race condition, mutex, four mutual-exclusion algorithms, Producer–Consumer and Pipe IPC were run successfully.
-- Detailed observed outputs are recorded in `phase-2/docs/EVIDENCE_LOG.md`.
-- No screenshots or terminal-output attachments have been added to the repository.
+- Previously verified local test suite: 13 tests passed, 0 failures, 0 errors (0.236 seconds).
+- Newly added semaphore, monitor, Dining Philosophers and Sleeping Barber tests have not yet been run on the project owner's machine.
+- Do not claim the new slice is verified until its CLI demonstrations and full test suite have been executed locally.
+- Detailed prior execution results are recorded in `phase-2/docs/EVIDENCE_LOG.md`.
