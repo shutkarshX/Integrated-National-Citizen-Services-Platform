@@ -6,18 +6,19 @@ Phase 2 follows the official Modules 3 and 4 syllabus. Work is isolated from the
 
 ## Implemented Module 3 demonstrations
 
-The current source includes deterministic race-condition and mutex counter exercises; Peterson's Solution, Strict Alternation, Lamport's Bakery Algorithm and a Test-and-Set-style spin lock; bounded-buffer Producer–Consumer; parent-child process communication through a multiprocessing Pipe; binary/counting semaphore capacity demonstrations; a writer-preference Readers–Writers monitor; Dining Philosophers using an N-1 admission semaphore to prevent circular wait; and a Sleeping Barber simulation with a finite waiting room.
+The current source includes race-condition and mutex exercises; Peterson's Solution, Strict Alternation, Lamport's Bakery Algorithm and a Test-and-Set-style spin lock; bounded-buffer Producer–Consumer; parent-child Pipe IPC; binary/counting semaphore demonstrations; a writer-preference Readers–Writers monitor; Dining Philosophers; Sleeping Barber; Resource Allocation Graph cycle detection; the Banker's safety and resource-request algorithms; multi-instance deadlock detection; a victim-selection recovery example; Coffman conditions and prevention strategies; and a database transaction wait-for graph case study.
 
-These are user-space teaching simulations in Python, not kernel implementations. The Test-and-Set-style lock uses Python's non-blocking lock acquisition and is not a hardware Test-and-Set instruction. The Readers–Writers monitor uses writer preference, which can delay readers under a continuous stream of writers. The Dining Philosophers solution limits entry to N-1 philosophers. The Sleeping Barber simulation models finite waiting-room capacity and records served versus turned-away customers.
+These are user-space teaching simulations in Python, not kernel implementations. The Test-and-Set-style lock is not a hardware instruction. The Resource Allocation Graph cycle example uses single-instance resource types; with multiple instances, a cycle alone is not sufficient to prove deadlock. Banker's Algorithm checks whether a state is safe before granting a request. The recovery example illustrates one possible victim-selection policy, not a universal operating-system policy.
 
 ## Run from repository root
 
 ```bash
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py semaphore-demo --workers 6 --permits 3
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py semaphore-demo --workers 6 --permits 1
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py readers-writers --readers 4 --writers 2 --iterations 10
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py dining-philosophers --philosophers 5 --meals 3
-PYTHONPATH=phase-2/src python3 phase-2/src/main.py sleeping-barber --customers 10 --chairs 3
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py rag-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py banker-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py deadlock-detection
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py deadlock-prevention
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py deadlock-recovery
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py database-deadlock
 PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
@@ -25,4 +26,4 @@ No third-party Python packages are required.
 
 ## Pending scope
 
-Deadlock characterization, prevention, avoidance, detection and recovery; Banker's Algorithm; database transaction deadlock case study; and all Module 4 memory-management topics remain pending until implemented and verified.
+Module 4 memory management remains pending: loading/linking/address binding, partition allocation, paging/segmentation, virtual memory and page replacement, file and disk management, virtualization, and GPU/CUDA introduction.
