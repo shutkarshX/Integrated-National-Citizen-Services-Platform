@@ -10,7 +10,7 @@ This tracker distinguishes source implementation from execution evidence. It is 
 | Linux host inspection | **Executed successfully on Ubuntu 26.04 LTS** | `python3 phase-1/src/main.py system`; output recorded in `LINUX_EXECUTION_EVIDENCE.md` |
 | Bash host audit | **Executed successfully** | `bash phase-1/scripts/linux_audit.sh`; output recorded in `LINUX_EXECUTION_EVIDENCE.md` |
 | Round Robin CLI demonstration | **Executed successfully**; quantum 2; all four sample processes completed | `python3 phase-1/src/main.py schedule --algorithm rr --quantum 2`; output recorded in `LINUX_EXECUTION_EVIDENCE.md` |
-| Threads and multithreading | Not implemented | Pending |
+| Real child-process creation and waiting | Implemented; automated test added, local execution pending | `process-demo` uses Python `subprocess.Popen` and `communicate`; it launches two real user-space child processes. |\n| Concurrent threads and mutual exclusion | Implemented; 2 automated tests added, local execution pending | `thread-demo` uses `threading.Thread` and `threading.Lock` to protect shared counter updates. |
 | Multilevel Queue / Multilevel Feedback Queue | Not implemented | Pending |
 | OS fundamentals and RTOS case-study write-up | Study documentation and case-study evidence pending | Pending |
 
