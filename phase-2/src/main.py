@@ -6,6 +6,7 @@ from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
 from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo
 from citizen_os.address_translation import run_paging_demo, run_segmentation_demo, run_segmented_paging_demo
+from citizen_os.page_replacement import run_demand_paging_demo, run_page_replacement_comparison, run_belady_anomaly_demo
 from citizen_os.deadlock import (
     database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
     resource_allocation_graph_demo, run_bankers_demo,
@@ -59,6 +60,9 @@ def main() -> None:
     sub.add_parser("paging-demo", help="translate a logical address using a page table")
     sub.add_parser("segmentation-demo", help="translate a segment:offset address using base and limit")
     sub.add_parser("segmented-paging-demo", help="translate an address using segmentation followed by paging")
+    sub.add_parser("demand-paging-demo", help="demonstrate demand loading and page faults")
+    sub.add_parser("page-replacement-demo", help="compare FIFO, LRU, Optimal and LFU page replacement")
+    sub.add_parser("belady-anomaly-demo", help="demonstrate Belady anomaly with FIFO")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -118,6 +122,15 @@ def main() -> None:
     elif args.command == "segmented-paging-demo":
         result = run_segmented_paging_demo()
         label = "Segmented paging address translation demonstration"
+    elif args.command == "demand-paging-demo":
+        result = run_demand_paging_demo()
+        label = "Demand paging demonstration"
+    elif args.command == "page-replacement-demo":
+        result = run_page_replacement_comparison()
+        label = "Page replacement algorithm comparison"
+    elif args.command == "belady-anomaly-demo":
+        result = run_belady_anomaly_demo()
+        label = "Belady anomaly demonstration (FIFO)"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
