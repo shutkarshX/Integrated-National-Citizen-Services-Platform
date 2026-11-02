@@ -55,6 +55,22 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 
 These are user-space teaching simulations of address translation, not hardware MMU implementations. The three CLI demonstrations and complete 55-test suite were locally verified on 2026-11-03.
 
+
+## Demand paging and page replacement
+
+The current slice adds demand loading and FIFO, LRU, Optimal and LFU replacement. LFU ties are resolved by LRU. A separate FIFO example demonstrates Belady's anomaly.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py demand-paging-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py page-replacement-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py belady-anomaly-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+These are user-space educational simulations, not kernel virtual-memory implementations. Local verification is pending.
+
 ## Remaining scope
 
 Loading/linking/address binding, paging/segmentation, virtual memory and page replacement, file and disk management, virtualization, and GPU/CUDA introduction remain pending.
