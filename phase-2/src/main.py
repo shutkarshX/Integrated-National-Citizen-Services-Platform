@@ -4,7 +4,7 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
-from citizen_os.concurrency.patterns import (
+from citizen_os.deadlock import (\n    deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,\n    resource_allocation_graph_demo, run_bankers_demo,\n)\nfrom citizen_os.concurrency.patterns import (
     run_dining_philosophers, run_readers_writers, run_semaphore_demo, run_sleeping_barber,
 )
 
@@ -41,6 +41,11 @@ def main() -> None:
     barber = sub.add_parser("sleeping-barber", help="simulate a barber and finite waiting room")
     barber.add_argument("--customers", type=int, default=10)
     barber.add_argument("--chairs", type=int, default=3)
+    sub.add_parser("rag-demo", help="show a single-instance resource-allocation graph cycle")
+    sub.add_parser("banker-demo", help="run the classic Banker's safety example")
+    sub.add_parser("deadlock-detection", help="run a multi-instance deadlock detection example")
+    sub.add_parser("deadlock-prevention", help="list Coffman conditions and prevention strategies")
+    sub.add_parser("deadlock-recovery", help="demonstrate victim selection and resource release")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -67,6 +72,21 @@ def main() -> None:
     elif args.command == "dining-philosophers":
         result = run_dining_philosophers(args.philosophers, args.meals)
         label = "Dining Philosophers demonstration (N-1 room semaphore)"
+    elif args.command == "rag-demo":
+        result = resource_allocation_graph_demo()
+        label = "Resource Allocation Graph cycle demonstration (single-instance resources)"
+    elif args.command == "banker-demo":
+        result = run_bankers_demo()
+        label = "Banker's Algorithm safety demonstration"
+    elif args.command == "deadlock-detection":
+        result = detect_deadlock([0, 0], [[1, 0], [0, 1]], [[0, 1], [1, 0]])
+        label = "Multi-instance deadlock detection demonstration"
+    elif args.command == "deadlock-prevention":
+        result = deadlock_conditions_and_prevention()
+        label = "Coffman conditions and deadlock prevention strategies"
+    elif args.command == "deadlock-recovery":
+        result = recover_by_terminating_victim([[1, 0], [0, 3]], [0, 1])
+        label = "Deadlock recovery demonstration (largest-allocation victim policy)"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
