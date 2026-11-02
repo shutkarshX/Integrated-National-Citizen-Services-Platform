@@ -5,6 +5,7 @@ from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
 from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo
+from citizen_os.address_translation import run_paging_demo, run_segmentation_demo, run_segmented_paging_demo
 from citizen_os.deadlock import (
     database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
     resource_allocation_graph_demo, run_bankers_demo,
@@ -55,6 +56,9 @@ def main() -> None:
     sub.add_parser("fixed-partitions", help="compare first, best and worst fit for fixed partitions")
     variable = sub.add_parser("variable-partitions", help="run variable-partition allocation with a fit strategy")
     variable.add_argument("--strategy", choices=["first-fit", "best-fit", "worst-fit"], default="first-fit")
+    sub.add_parser("paging-demo", help="translate a logical address using a page table")
+    sub.add_parser("segmentation-demo", help="translate a segment:offset address using base and limit")
+    sub.add_parser("segmented-paging-demo", help="translate an address using segmentation followed by paging")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -105,6 +109,15 @@ def main() -> None:
     elif args.command == "variable-partitions":
         result = run_variable_partition_demo(args.strategy)
         label = f"Variable partition allocation: {args.strategy}"
+    elif args.command == "paging-demo":
+        result = run_paging_demo()
+        label = "Paging address translation demonstration"
+    elif args.command == "segmentation-demo":
+        result = run_segmentation_demo()
+        label = "Segmentation address translation demonstration"
+    elif args.command == "segmented-paging-demo":
+        result = run_segmented_paging_demo()
+        label = "Segmented paging address translation demonstration"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
