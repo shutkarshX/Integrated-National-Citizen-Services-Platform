@@ -8,9 +8,9 @@
 
 ## Executive finding
 
-The Phase 2 codebase is substantial and its complete local test suite has passed **132 tests**. The implementation covers most of the Module 3 and Module 4 topics through deterministic user-space demonstrations. However, a successful test suite proves the implemented code works against its tests; it does not prove that every syllabus requirement has been covered.
+The Phase 2 codebase's complete local test suite has now passed **138 tests**. The owner also ran the newly added lock-variable interleaving, process-classification and demand-paging effective-access-time commands. The implementation covers most Module 3 and Module 4 topics through deterministic user-space demonstrations. A successful test suite proves the implemented code works against its tests; it does not prove that every practical syllabus requirement has been performed on real hardware or in a target operating system.
 
-**Phase 2 is implementation-verified but not yet fully syllabus-complete.** The main outstanding syllabus items are the Windows 10 virtual-memory case study, a more explicit demand-paging performance analysis, explicit treatment of the lock-variable technique and process types, and a genuine CUDA programming artifact / real VM configuration evidence if those are required for practical assessment.
+**Phase 2 is implementation-verified, with some practical evidence limitations still open.** The lock-variable and process-classification additions and EAT analysis are locally verified. The Windows 10 item is a sourced research case study, not a local Windows experiment. A CUDA `.cu` source exists but has not been compiled/run on a GPU. The VM configuration remains a model rather than a booted guest.
 
 This audit intentionally distinguishes:
 - **Implemented and tested:** source and tests exist, and the owner supplied successful local execution evidence.
@@ -69,7 +69,7 @@ Therefore, a supposed "Module 5" is not part of this official course syllabus. F
 ### Partial or missing syllabus requirements
 
 - **Memory-management functions:** implementation focuses on allocation and address translation. A concise concept explanation of the OS memory manager's responsibilities (tracking, allocation/deallocation, protection, sharing and virtual-memory support) should be added to the study/report material.
-- **Performance of demand paging:** `demand_paging_performance.py` now calculates effective access time using memory-access time, page-fault rate and page-fault service time, and compares four illustrative rates. Inputs are stated assumptions, not measured hardware timings.
+- **Performance of demand paging:** `demand_paging_performance.py` calculates effective access time using memory-access time, page-fault rate and page-fault service time. The owner ran four illustrative rates successfully; assumed values are 100 ns memory access and 8,000,000 ns page-fault service time, not measured hardware timings.
 - **Windows 10 virtual-memory case study:** a sourced research case study is now in `WINDOWS_10_VIRTUAL_MEMORY_CASE_STUDY.md`. It explains page files, commit charge/limit, hard faults and performance counters, and gives an observation procedure. It is explicitly research-based; no local Windows 10 measurements or screenshots have been supplied.
 - **Virtual machines / hypervisor:** code validates a hypothetical VM resource configuration and explains Type-1 and Type-2 hypervisors. It does not configure or boot a real VM. This is useful conceptual evidence, but it does not fully demonstrate the CO4 phrase "configure virtual machines" if a hands-on configuration is expected.
 - **GPU and CUDA programming:** an optional CUDA vector-addition kernel source now exists at `cuda/vector_add.cu`, with build/run instructions in the README. It has not been compiled or executed with `nvcc` on a CUDA-capable GPU. The previously verified Python vector-addition remains a CPU-side simulation.
@@ -77,12 +77,17 @@ Therefore, a supposed "Module 5" is not part of this official course syllabus. F
 ## Verification evidence reviewed
 
 The owner supplied Ubuntu terminal output confirming:
-- Python compilation of the latest virtualization/CUDA module and CLI entry point succeeded.
+- Python compilation of `main.py`, `concurrency_concepts.py` and `demand_paging_performance.py` succeeded.
+- The lock-variable CLI showed both P1 and P2 entering the critical section after both observed the lock as false.
+- The process-types CLI printed the four common classifications.
+- The demand-paging performance CLI produced EAT values of 100 ns, 108 ns, 900 ns and 8,100 ns at fault rates 0, 0.000001, 0.0001 and 0.001 respectively, using the stated illustrative assumptions.
+- The latest complete test suite reported **138 tests passed, 0 failures, 0 errors** in **0.348 seconds**.
+- Python compilation of the virtualization/CUDA module and CLI entry point succeeded in the earlier verification run.
 - The virtualization CLI demonstration completed and displayed the configured VM resource model and both hypervisor types.
 - The CUDA CLI demonstration completed. The seven-element vector addition returned `[11, 22, 33, 44, 55, 66, 77]`; two blocks launched eight threads, seven processed elements and one was excluded by the bounds check.
-- The complete Phase 2 unittest suite reported **132 tests passed, 0 failures, 0 errors** in **0.359 seconds**.
+- The preceding complete Phase 2 unittest suite reported **132 tests passed, 0 failures, 0 errors** in **0.359 seconds**; the latest suite has since increased to 138 tests.
 
-The exact topic-specific evidence and earlier test runs are recorded in `EVIDENCE_LOG.md`. These results verify the current simulations; they do not close the partial/missing syllabus items listed above.
+The exact topic-specific evidence and earlier test runs are recorded in `EVIDENCE_LOG.md`. These results verify the current Python simulations and tests; they do not constitute Windows 10 runtime measurements, CUDA GPU execution or a real VM boot.
 
 ## Report and documentation readiness
 
@@ -108,9 +113,9 @@ When drafting Phase 2 report content:
 
 ## Final audit decision
 
-**Current decision: Phase 2 implementation tests pass, but syllabus closure is pending.** The 132-test result is valid evidence for the current code. Do not describe Phase 2 as fully syllabus-complete until the missing and partial items above have either been completed or explicitly accepted as out of scope by the course assessor.
+**Current decision: Phase 2 Python implementation and automated tests are verified (138/138), but practical syllabus closure remains conditional.** The lock-variable/process-type additions and demand-paging EAT analysis have been verified. The Windows 10 case study is research-only; the CUDA source has not been built or run on GPU hardware; and the VM model has not booted a guest. Do not claim those practical activities were performed. Confirm with the assessor whether research-based Windows coverage, optional CUDA source, and conceptual VM modelling satisfy the expected practical depth.
 
 
 ## Follow-up work added after the initial audit
 
-The explicit lock-variable interleaving, common process classifications, effective-access-time calculation, Windows 10 research case study and optional CUDA kernel source have been added. Local verification of the new Python commands and tests is still pending owner execution. CUDA compilation/execution and real VM configuration are also pending hardware/environment evidence. Do not mark those as locally verified yet.
+The explicit lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally; the full suite passed 138 tests. The Windows 10 research case study and optional CUDA kernel source are present. CUDA compilation/execution and real VM configuration are still pending hardware/environment evidence.
