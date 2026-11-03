@@ -4,7 +4,7 @@ import threading
 import unittest
 from http.cookiejar import CookieJar
 from pathlib import Path
-from urllib.request import Request, build_opener
+from urllib.request import Request, build_opener, HTTPCookieProcessor
 from urllib.error import HTTPError
 
 import web_app
@@ -31,7 +31,7 @@ class AdminDashboardTests(unittest.TestCase):
         web_app.ADMIN_SESSIONS.clear()
 
     def setUp(self):
-        self.opener = build_opener()
+        self.opener = build_opener(HTTPCookieProcessor(CookieJar()))
         self.ref = "CIV-2026-ADM123"
         web_app.write_store([{
             "reference": self.ref, "service": "Birth Certificate",
