@@ -7,15 +7,23 @@ Academic prototype only: synthetic records, no government integration or authent
 """
 from __future__ import annotations
 import json
+import os
 import re
 import secrets
+import threading
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
+from admin_page import ADMIN_PAGE
 
 ROOT = Path(__file__).resolve().parent
 DATA_FILE = ROOT / "data" / "citizen_applications.json"
+ADMIN_PASSWORD = os.environ.get("CIVICONE_ADMIN_PASSWORD", "")
+ADMIN_SESSIONS = {}
+STORE_LOCK = threading.RLock()
+ALLOWED_STATUSES = {"Submitted", "Under Review", "Approved", "Rejected"}
+SESSION_COOKIE = "civicone_admin_session"
 
 SERVICES = [
     {"id":"birth-certificate","name":"Birth Certificate","category":"Certificates","description":"Apply for a birth certificate or request a certified copy of an existing record.","time":"7–10 working days","documents":["Proof of birth","Parent or guardian identity proof","Address proof"],"icon":"BC"},
@@ -74,6 +82,16 @@ def write_store(items):
     temp.write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")
     temp.replace(DATA_FILE)
 
+
+def now_label():
+    return datetime.now(timezone.utc).astimezone().strftime("%d %b %Y, %I:%M %p")
+
+
+def admin_session(handler):
+    cookie = handler.headers.get("Cookie", "")
+    token = next((part.split("=", 1)[1] for part in cookie.split(";") if part.strip().startswith(SESSION_COOKIE + "=")), "")
+    return ADMIN_SESSIONS.get(token)
+
 def clean_text(value, label, limit):
     if not isinstance(value, str):
         raise ValueError(f"{label} is required")
@@ -95,6 +113,26 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
+        if path == "/admin":
+            body = ADMIN_PAGE.encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if path == "/api/admin/applications":
+            if not admin_session(self):
+                return self.send_json(401, {"error": "Administrator sign-in required."})
+            try:
+                with STORE_LOCK:
+                    items = read_store()
+                safe_items = [{k: app.get(k, "") for k in ("reference", "service", "name", "email", "mobile", "details", "status", "submitted_at", "status_updated_at", "status_history")} for app in items]
+                return self.send_json(200, {"applications": list(reversed(safe_items))})
+            except ValueError as exc:
+                return self.send_json(500, {"error": str(exc)})
         if path == "/":
             body = PAGE.encode()
             self.send_response(200)
@@ -118,7 +156,73 @@ class Handler(BaseHTTPRequestHandler):
         return self.send_json(404, {"error": "Not found"})
 
     def do_POST(self):
-        if urlparse(self.path).path != "/api/applications":
+        path = urlparse(self.path).path
+        if path == "/api/admin/login":
+            if not ADMIN_PASSWORD:
+                return self.send_json(503, {"error": "Admin access is not configured. Set CIVICONE_ADMIN_PASSWORD and restart the server."})
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length < 1 or length > 2048:
+                    raise ValueError("Invalid request size")
+                data = json.loads(self.rfile.read(length).decode("utf-8"))
+                if not isinstance(data, dict) or not secrets.compare_digest(str(data.get("password", "")), ADMIN_PASSWORD):
+                    return self.send_json(401, {"error": "Incorrect administrator password."})
+                token = secrets.token_urlsafe(32)
+                ADMIN_SESSIONS[token] = {"created_at": now_label()}
+                body = json.dumps({"ok": True}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Set-Cookie", f"{SESSION_COOKIE}={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800")
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+                return self.send_json(400, {"error": str(exc)})
+        if path == "/api/admin/logout":
+            cookie = self.headers.get("Cookie", "")
+            token = next((part.split("=", 1)[1] for part in cookie.split(";") if part.strip().startswith(SESSION_COOKIE + "=")), "")
+            ADMIN_SESSIONS.pop(token, None)
+            body = b'{"ok":true}'
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Set-Cookie", f"{SESSION_COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0")
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if path == "/api/admin/status":
+            if not admin_session(self):
+                return self.send_json(401, {"error": "Administrator sign-in required."})
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length < 1 or length > 4096:
+                    raise ValueError("Invalid request size")
+                data = json.loads(self.rfile.read(length).decode("utf-8"))
+                if not isinstance(data, dict):
+                    raise ValueError("Request must be a JSON object")
+                reference = clean_text(data.get("reference"), "Reference", 40)
+                status = clean_text(data.get("status"), "Status", 30)
+                if status not in ALLOWED_STATUSES:
+                    raise ValueError("Choose a valid application status")
+                with STORE_LOCK:
+                    items = read_store()
+                    app = next((x for x in items if x.get("reference", "").lower() == reference.lower()), None)
+                    if not app:
+                        return self.send_json(404, {"error": "Application not found."})
+                    previous = app.get("status", "Submitted")
+                    if previous != status:
+                        changed_at = now_label()
+                        app["status"] = status
+                        app["status_updated_at"] = changed_at
+                        app.setdefault("status_history", [{"status": previous, "changed_at": app.get("submitted_at", "")}])
+                        app["status_history"].append({"status": status, "changed_at": changed_at})
+                        write_store(items)
+                return self.send_json(200, {"application": {"reference": app["reference"], "status": app["status"], "status_updated_at": app.get("status_updated_at", "")}})
+            except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+                return self.send_json(400, {"error": str(exc)})
+        if path != "/api/applications":
             return self.send_json(404, {"error": "Not found"})
         try:
             length = int(self.headers.get("Content-Length", "0"))
@@ -138,11 +242,12 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("Enter a valid email address")
             if not re.fullmatch(r"[0-9]{10}", mobile):
                 raise ValueError("Mobile number must contain exactly 10 digits")
-            items = read_store()
-            reference = "CIV-2026-" + secrets.token_hex(3).upper()
-            app = {"reference": reference, "service_id": service["id"], "service": service["name"], "name": name, "email": email, "mobile": mobile, "details": details, "status": "Submitted", "submitted_at": datetime.now(timezone.utc).astimezone().strftime("%d %b %Y, %I:%M %p")}
-            items.append(app)
-            write_store(items)
+            with STORE_LOCK:
+                items = read_store()
+                reference = "CIV-2026-" + secrets.token_hex(3).upper()
+                app = {"reference": reference, "service_id": service["id"], "service": service["name"], "name": name, "email": email, "mobile": mobile, "details": details, "status": "Submitted", "submitted_at": now_label(), "status_history": [{"status": "Submitted", "changed_at": now_label()}]}
+                items.append(app)
+                write_store(items)
             return self.send_json(201, {"application": {"reference": reference, "service": service["name"], "status": app["status"], "submitted_at": app["submitted_at"]}})
         except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
             return self.send_json(400, {"error": str(exc)})
