@@ -121,7 +121,7 @@ PYTHONPATH=phase-2/src python3 phase-2/src/main.py disk-scheduling-demo
 PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
-These are in-memory teaching simulations, not real filesystem modifications or physical disk I/O. Local verification is pending; see the implementation tracker and evidence log.
+These are in-memory teaching simulations, not real filesystem modifications or physical disk I/O. Locally verified on 2026-11-03: compilation passed, both CLI demos completed, and the complete test suite passed 132 tests with 0 failures and 0 errors. See the implementation tracker and evidence log for recorded output.
 
 
 ## Virtual machines, hypervisors and GPU/CUDA — source added
