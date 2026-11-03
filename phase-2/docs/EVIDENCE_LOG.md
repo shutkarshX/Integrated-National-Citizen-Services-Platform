@@ -541,3 +541,21 @@ The disk-scheduling demo used request queue `[98, 183, 37, 122, 14, 124, 65, 67]
 The complete test suite reported **113 tests passed, 0 failures, 0 errors** in **0.363 seconds**. This includes the 25 tests in `test_file_disk.py`.
 
 These implementations are educational in-memory models; they do not modify a real filesystem or perform physical disk I/O.
+
+
+## Virtual machines, hypervisors and GPU/CUDA — source added, local verification pending
+
+Added `phase-2/src/citizen_os/virtualization_cuda.py` and `phase-2/tests/test_virtualization_cuda.py` (18 tests).
+
+The VM model validates a named VM's virtual CPU and memory allocation against host capacity, and documents Type-1 bare-metal versus Type-2 hosted hypervisors. The CUDA section explains host/device responsibilities, grid/block/thread hierarchy and the global index formula `blockIdx.x * blockDim.x + threadIdx.x`. A CPU-side vector-addition simulation models block and thread indices and checks bounds when the final block is only partially occupied.
+
+Run from repository root after pulling:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/virtualization_cuda.py phase-2/src/main.py
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py virtualization-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py cuda-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Scope limitation: these are educational user-space demonstrations. The VM model does not create or boot a real virtual machine; the CUDA model runs on the CPU and does not invoke a CUDA runtime or GPU. Local verification is pending.
