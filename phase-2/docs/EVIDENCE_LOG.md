@@ -572,3 +572,59 @@ The CUDA demo displayed the host/device roles, grid/block/thread hierarchy and g
 The complete test suite reported **132 tests passed, 0 failures, 0 errors** in **0.359 seconds**. This includes the 19 tests in `test_virtualization_cuda.py`.
 
 Scope limitation: VM configuration is not a real VM boot, and the CUDA calculation is a CPU-side simulation, not a GPU kernel execution.
+
+
+## Additional syllabus-gap demonstrations — locally verified (2026-11-03)
+
+The project owner pulled the new lock-variable/process-classification and demand-paging performance additions, compiled the changed Python files, ran all three new CLI commands and executed the complete test suite on Ubuntu.
+
+Compilation command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/main.py phase-2/src/citizen_os/concurrency_concepts.py phase-2/src/citizen_os/demand_paging_performance.py
+```
+
+Observed: compilation completed with no errors.
+
+### Non-atomic lock-variable demonstration
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py lock-variable-demo`
+
+Observed interleaving: P1 checked the shared Boolean and observed `False`; P2 then checked and also observed `False`; both subsequently set the variable and entered the critical section. The output reported `processes_entered_critical_section: ['P1', 'P2']` and `mutual_exclusion_violated: True`. This deterministic teaching trace demonstrates that a separate check followed by a set is not atomic. It is an interleaving model, not a hardware lock implementation.
+
+### Process classifications
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py process-types`
+
+Observed output described independent and cooperating processes, and CPU-bound and I/O-bound processes. The output itself notes that the exact classification expected should be checked against the instructor's lecture notes.
+
+### Demand-paging effective access time
+
+Command: `PYTHONPATH=phase-2/src python3 phase-2/src/main.py demand-paging-performance`
+
+The demonstration used illustrative assumptions of 100 ns memory access time and 8,000,000 ns page-fault service time. These are example inputs, not measurements from the project machine. Observed effective access times were:
+
+- Page-fault rate 0: 100 ns (1.0× slowdown).
+- Page-fault rate 0.000001: 108 ns (1.08× slowdown).
+- Page-fault rate 0.0001: 900 ns (9.0× slowdown).
+- Page-fault rate 0.001: 8,100 ns (81.0× slowdown).
+
+This confirms the model's expected relationship: with the stated assumptions, increasing the page-fault rate increases effective access time substantially.
+
+### Updated full test suite
+
+Command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed:
+
+```text
+Ran 138 tests in 0.348s
+
+OK
+```
+
+All 138 tests reported `ok`; zero failures and zero errors. The new `test_syllabus_gaps.py` module contributes six tests. This verifies the new Python demonstrations and their tests. It does not verify the optional CUDA `.cu` source, real VM creation, or Windows 10 runtime observations.
