@@ -156,3 +156,14 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 A sourced Windows 10 virtual-memory research case study is in `docs/WINDOWS_10_VIRTUAL_MEMORY_CASE_STUDY.md`. It is not a local Windows measurement. An optional real CUDA kernel source is in `cuda/vector_add.cu`; compile and run it only on a CUDA-capable system with `nvcc`.
+
+
+### Memory-management functions overview
+
+Run the conceptual overview with:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py memory-management-functions
+```
+
+It summarizes memory tracking, allocation and reclamation, address translation, protection, controlled sharing, virtual-memory support and fragmentation management. It is a study aid; the project remains a user-space simulation and does not implement a kernel memory manager.
