@@ -528,3 +528,16 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 The new test module covers the access/allocation methods and six disk algorithms. These are in-memory educational simulations, not real filesystem operations or physical disk I/O. Local verification is pending.
+
+
+## File management and disk scheduling — locally verified (2026-11-03)
+
+The project owner pulled the implementation and ran Python compilation, both CLI demonstrations, and the complete unittest suite on Ubuntu.
+
+Compilation completed without errors. The file-management demo successfully demonstrated sequential access (record 3, Kabir; 4 records scanned), direct access (record 3, Kabir; 1 record scanned), and indexed access (key `STU-109` resolved to record 4, Zoya; 1 record scanned). It also demonstrated contiguous blocks `[2, 3, 4, 5]`, linked blocks `[0, 1, 3, 4]` with their pointer chain, and indexed allocation using index block 2 with data blocks `[0, 1, 3, 4]`.
+
+The disk-scheduling demo used request queue `[98, 183, 37, 122, 14, 124, 65, 67]`, initial head 53, and cylinders 0–199, moving initially right. Observed total head movements were: FCFS 640, SSTF 236, SCAN 331, C-SCAN 382, LOOK 299, and C-LOOK 322. These values are from the actual CLI output. SCAN-family boundary travel and C-SCAN wrap travel are included in the movement totals.
+
+The complete test suite reported **113 tests passed, 0 failures, 0 errors** in **0.363 seconds**. This includes the 25 tests in `test_file_disk.py`.
+
+These implementations are educational in-memory models; they do not modify a real filesystem or perform physical disk I/O.
