@@ -34,7 +34,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: working-set model and thrashing-risk indicator (10 new tests; full suite passed 77 tests).
 - [x] Locally verified: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (25 new tests; full suite passed 113 tests).
 - [x] Locally verified: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (19 tests; full suite passed 132 tests).
-- [x] Locally verified: explicit non-atomic lock-variable interleaving, common process classifications, and demand-paging effective-access-time scenarios (6 new tests; full suite passed 138 tests).
+- [x] Locally verified: explicit non-atomic lock-variable interleaving, common process classifications, and demand-paging effective-access-time scenarios (6 new tests; full suite passed 140 tests).
 - [x] Locally verified: memory-management functions overview (tracking, allocation/reclamation, address translation, protection, sharing, virtual-memory support and fragmentation management); CLI output and 2 dedicated tests passed; full suite passed 140 tests.
 
 ## Verification record
@@ -63,7 +63,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 ## Syllabus audit outcome
 
-The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The current 138-test suite verifies the implemented Python demonstrations. The lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally. The Windows 10 case study is documented research, not a local Windows measurement. The optional CUDA kernel has not been compiled or run on a GPU, and the VM model has not booted a real guest OS. See the audit for exact scope and remaining evidence requirements.
+The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The latest owner-run 140-test suite verifies the implemented Python demonstrations. The lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally. The Windows 10 case study is documented research, not a local Windows measurement. The optional CUDA kernel has not been compiled or run on a GPU, and the VM model has not booted a real guest OS. See the audit for exact scope and remaining evidence requirements.
 
 
 ## Additional syllabus items added — verification pending
