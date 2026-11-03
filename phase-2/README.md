@@ -142,3 +142,17 @@ These are educational CPU-side models. The VM model does not boot a guest OS, an
 ## Syllabus audit
 
 The official CCSE0303A Modules 3–4 coverage review is documented in [`docs/SYLLABUS_AUDIT.md`](docs/SYLLABUS_AUDIT.md). The current implementation suite passes 132 tests, but the audit identifies remaining syllabus-level gaps; passing tests alone is not treated as proof of complete syllabus coverage.
+
+
+## Additional syllabus coverage work in progress
+
+The explicit lock-variable race, process-classification notes and demand-paging effective-access-time model are available through:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py lock-variable-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py process-types
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py demand-paging-performance
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+A sourced Windows 10 virtual-memory research case study is in `docs/WINDOWS_10_VIRTUAL_MEMORY_CASE_STUDY.md`. It is not a local Windows measurement. An optional real CUDA kernel source is in `cuda/vector_add.cu`; compile and run it only on a CUDA-capable system with `nvcc`.
