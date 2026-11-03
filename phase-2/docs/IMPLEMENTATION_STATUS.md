@@ -26,7 +26,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 ## Module 4 — Memory Management
 
-- [ ] Source added; local verification pending: linking external symbols, loading modules, relocation and address-binding concepts (11 new tests).
+- [x] Locally verified: linking external symbols, loading modules, relocation and address-binding concepts (11 new tests; full suite passed 88 tests).
 - [x] Locally verified: fixed/variable partitions and First Fit, Best Fit, Worst Fit (44-test run; allocation demos completed).
 - [x] Locally verified: paging, segmentation and segmented-paging address translation (3 CLI demonstrations; full suite passed 55 tests).
 - [x] Locally verified: demand paging and FIFO, LRU, Optimal, LFU page replacement (3 CLI demonstrations; full suite passed 67 tests).
@@ -51,3 +51,5 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - Working-set/thrashing locally verified on 2026-11-03: both CLI demonstrations completed; compilation passed; full suite passed 77 tests with 0 failures and 0 errors.
 
 - Loading/linking/address-binding implementation added on 2026-11-03; compilation, CLI execution and full-suite verification are pending.
+
+- Loading/linking/address-binding locally verified on 2026-11-03: compilation passed; CLI demo resolved and relocated `calculate_tax` to address 4384; full suite passed 88 tests with 0 failures and 0 errors.
