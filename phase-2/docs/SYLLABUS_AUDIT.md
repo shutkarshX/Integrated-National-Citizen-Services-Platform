@@ -119,3 +119,8 @@ When drafting Phase 2 report content:
 ## Follow-up work added after the initial audit
 
 The explicit lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally; the full suite passed 138 tests. The Windows 10 research case study and optional CUDA kernel source are present. CUDA compilation/execution and real VM configuration are still pending hardware/environment evidence.
+
+
+## Latest addition awaiting local verification
+
+A dedicated memory-management functions module, CLI command and two tests have been added. The owner should run the compilation command, new CLI command and complete test suite before this addition is marked locally verified.
