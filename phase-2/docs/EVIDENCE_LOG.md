@@ -645,3 +645,92 @@ OK
 ```
 
 The two new tests in `test_memory_management_concepts.py` passed. This confirms the explanatory content and its scope limitation are covered by tests; it does not turn the user-space demonstrations into a kernel memory manager.
+
+
+## Browser integration — locally and manually verified (2026-11-03)
+
+The project owner pulled the browser integration, ran its focused HTTP integration tests, started the local server, and supplied browser screenshots showing request registration and two-process scheduling results.
+
+### Automated HTTP integration tests
+
+Command:
+
+```bash
+PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_web_integration.py' -v
+```
+
+Observed:
+
+```text
+Ran 5 tests in 2.541s
+
+OK
+```
+
+All five tests passed:
+- Homepage serves the browser interface (HTTP 200).
+- Invalid request is rejected (HTTP 400).
+- Request creation returns a PID and persists the record (HTTP 201).
+- Schedule endpoint invokes the Phase 1 scheduler (HTTP 200).
+- Scheduling without requests returns a validation error (HTTP 400).
+
+A Python `ResourceWarning` appeared while the invalid-request test cleaned up its HTTPError response. The test itself passed; the warning is noted rather than represented as a failure.
+
+### Local server startup
+
+Command:
+
+```bash
+python3 web_app.py
+```
+
+Observed: server started and printed the local address `http://127.0.0.1:8000`. The owner opened the page in a browser and supplied screenshots of the rendered interface.
+
+### Manual browser test data
+
+Two synthetic requests were registered and displayed in the queue:
+
+| PID | Citizen | Service | CPU burst | Arrival | Priority |
+|---|---|---|---:|---:|---:|
+| P101 | Asha | Certificate services | 4 | 0 | 2 |
+| P102 | Rahul | Identity services | 2 | 0 | 1 |
+
+Both requests appeared in the queue with READY state.
+
+### Scheduling results observed in browser
+
+**FCFS**
+- Execution: P101 (0–4), then P102 (4–6).
+- P101: waiting 0, turnaround 4.
+- P102: waiting 4, turnaround 6.
+- Average waiting: 2.00; average turnaround: 5.00.
+
+**SJF (non-preemptive)**
+- Execution: P102 (0–2), then P101 (2–6).
+- P101: waiting 2, turnaround 6.
+- P102: waiting 0, turnaround 2.
+- Average waiting: 1.00; average turnaround: 4.00.
+
+**Priority (non-preemptive)**
+- Execution: P102 (0–2), then P101 (2–6), consistent with priority 1 being higher than priority 2.
+- P101: waiting 2, turnaround 6.
+- P102: waiting 0, turnaround 2.
+- Average waiting: 1.00; average turnaround: 4.00.
+
+**Round Robin (time quantum 2)**
+- Execution slices: P101 (0–2), P102 (2–4), P101 (4–6).
+- P101: waiting 2, turnaround 6.
+- P102: waiting 2, turnaround 4.
+- Average waiting: 2.00; average turnaround: 5.00.
+
+The observed execution orders and metrics match the expected calculations for the two requests, both arriving at time 0.
+
+### Verification boundary
+
+- The five focused HTTP tests passed on the owner's Ubuntu machine.
+- Browser screenshots supplied in the conversation show the interface, two registered requests, and each of the four scheduling results.
+- The server's local startup was confirmed.
+- A browser refresh followed by confirmation that both requests remained persisted was not shown in the supplied screenshots; do not mark that separate manual refresh check as completed.
+- The screenshots are evidence supplied in the conversation and have not been committed as image files in the repository.
+- The browser interface is a local academic prototype using synthetic data and JSON-file storage. It does not connect to real government services or store real citizen records.
+- This browser verification covers the integrated Phase 1 scheduling workflow. Phase 2 concurrency and memory demonstrations remain separate teaching modules.
