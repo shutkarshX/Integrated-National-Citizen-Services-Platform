@@ -61,6 +61,12 @@ class FileAllocationTests(unittest.TestCase):
         self.assertEqual(result["index_entries"], result["allocated_blocks"])
         self.assertNotIn(2, result["allocated_blocks"])
 
+    def test_linked_and_indexed_reserve_metadata_capacity(self):
+        with self.assertRaises(ValueError):
+            allocate_file_blocks("linked", "a.dat", 10, 10, 2)
+        with self.assertRaises(ValueError):
+            allocate_file_blocks("indexed", "a.dat", 10, 10, 2)
+
     def test_invalid_allocation_method_is_rejected(self):
         with self.assertRaises(ValueError):
             allocate_file_blocks("chained", "a.dat", 2)
