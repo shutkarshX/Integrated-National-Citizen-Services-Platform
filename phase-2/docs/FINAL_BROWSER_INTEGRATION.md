@@ -20,7 +20,7 @@ Automated HTTP tests:
 PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_citizen_portal.py' -v
 ```
 
-Manual acceptance: open the portal, select a service, submit fictional applicant details, note the generated reference, refresh the page and use the reference in the tracking form. Also verify invalid mobile/email input and an unknown reference.
+Manual acceptance: open the portal, select a service, submit fictional applicant details, note the generated reference, refresh the page and use the reference in the tracking form. Verify invalid mobile/email input and an unknown reference. For the admin flow, sign in at `/admin`, update the submitted application's status and confirm the new status through citizen tracking.
 
 ## OS scheduling lab
 
@@ -38,8 +38,12 @@ Automated HTTP tests:
 PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_web_integration.py' -v
 ```
 
+## Administrator workflow
+
+The citizen portal has a separate local administrator dashboard at `http://127.0.0.1:8000/admin`. Set `CIVICONE_ADMIN_PASSWORD` before starting `web_app.py`. The dashboard requires a signed-in session and supports listing, searching and filtering submitted applications, viewing their details, and changing a demo application's status among `Submitted`, `Under Review`, `Approved` and `Rejected`. Status changes and a simple history are stored in the same local JSON file. The owner manually verified submission, admin status update and citizen tracking of the updated status for a synthetic application.
+
 ## Limitations
 
-Both applications are local academic prototypes bound to loopback. Neither is an official government service. There is no authentication, authorization, external integration, payment processing, staff review workflow or production-grade privacy/security layer. Use fictional records only. The status lookup deliberately returns no applicant contact information.
+Both browser experiences are local academic prototypes bound to loopback. Neither is an official government service. CivicOne's admin login is a local demonstration mechanism, not production-grade authentication or authorization. There is no government database or identity-provider integration, payment processing, real document verification, notifications or live service fulfilment. Use fictional records only. Citizen status lookup deliberately returns no applicant contact information.
 
 Capture screenshots from the actual browser after running the acceptance steps. Do not treat mock data or illustrative screens as evidence of a live government integration.
