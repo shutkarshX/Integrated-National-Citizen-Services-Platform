@@ -16,7 +16,20 @@ python3 web_app.py
 
 Open **http://127.0.0.1:8000**.
 
-The portal currently includes a service catalogue, service-specific application form, input validation, locally persisted application records, generated reference numbers and status lookup. Records are stored in `data/citizen_applications.json`.
+The portal includes a service catalogue, service-specific application form, input validation, locally persisted application records, generated reference numbers and status lookup. Records are stored in `data/citizen_applications.json`.
+
+## Administrator dashboard
+
+The local administrator console is available at **http://127.0.0.1:8000/admin**. Configure a password before starting the server:
+
+```bash
+export CIVICONE_ADMIN_PASSWORD='choose-a-local-demo-password'
+python3 web_app.py
+```
+
+The dashboard lists submitted applications, supports search and status filters, and allows an administrator to move an application between `Submitted`, `Under Review`, `Approved` and `Rejected`. Status changes and a simple status history are persisted in the same local JSON store. The admin API requires a signed-in session; the citizen tracking endpoint continues to expose only the reference, service, status and submission time.
+
+This is a local academic demonstration, not production authentication or a deployment-ready administrative system. Keep the server bound to localhost and use fictional applicant data.
 
 ## OS scheduling demonstration
 
@@ -34,6 +47,12 @@ Citizen portal HTTP tests:
 
 ```bash
 PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_citizen_portal.py' -v
+```
+
+Administrator dashboard tests:
+
+```bash
+PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_admin_dashboard.py' -v
 ```
 
 OS lab HTTP tests:
