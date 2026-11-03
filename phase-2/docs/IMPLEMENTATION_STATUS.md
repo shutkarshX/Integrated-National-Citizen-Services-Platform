@@ -77,31 +77,26 @@ The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`
 The project owner ran Python compilation, all three new CLI commands and the complete test suite on Ubuntu on 2026-11-03. The suite passed 138 tests with 0 failures and 0 errors in 0.348 seconds. Exact outputs and the illustrative EAT assumptions are recorded in `EVIDENCE_LOG.md`. CUDA compilation/execution and real VM configuration remain pending.
 
 
-- Latest complete local verification (2026-11-03): **138 tests passed, 0 failures, 0 errors** (0.348 seconds), including the six new syllabus-gap tests. See `EVIDENCE_LOG.md` for exact commands and outputs.
+## Browser applications — locally and manually verified (2026-11-03)
 
+### CivicOne citizen-facing portal
 
-- Latest complete local verification (2026-11-03): **138 tests passed, 0 failures, 0 errors** (0.348 seconds), including the six new syllabus-gap tests. See `EVIDENCE_LOG.md` for exact commands and outputs.
+- [x] Locally verified: `python3 web_app.py` starts the citizen-facing portal at `http://127.0.0.1:8000`.
+- [x] Manually verified: service catalogue and service-specific application form render in the browser.
+- [x] Manually verified: a synthetic Birth Certificate application was submitted and generated reference `CIV-2026-12385B`.
+- [x] Manually verified: the local administrator dashboard displayed saved demo applications; the selected application was changed from `Submitted` to `Under Review`.
+- [x] Manually verified: citizen tracking displayed the same reference and updated `Under Review` status.
+- [x] Automated citizen portal and administrator tests are included in the latest 154-test Phase 2 suite.
+- [ ] Browser screenshots supplied in the conversation have not been committed as repository image files.
 
+The portal stores synthetic records in a local JSON file. The admin console is a local academic demonstration, not production authentication or a real government staff workflow.
 
-## Browser integration — locally verified (2026-11-03)
+### Separate CPU-scheduling browser demonstration
 
-- [x] Locally verified: browser server starts with `python3 web_app.py` and serves the interface at `http://127.0.0.1:8000`.
-- [x] Locally verified: all 5 focused HTTP integration tests passed on the project owner's Ubuntu machine (2.541 seconds; 0 failures and 0 errors).
-- [x] Manually verified in browser: two synthetic service requests (P101/Asha and P102/Rahul) were registered and displayed in READY state.
-- [x] Manually verified in browser: FCFS, SJF (non-preemptive), Priority (non-preemptive), and Round Robin (q=2) produced the expected two-process execution orders and waiting/turnaround metrics.
-- [x] Manually verified: after registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed both records remained visible; JSON-backed persistence across a page refresh is verified for this test data.
-- [ ] Screenshot files have not yet been committed to the repository; current evidence is present in the conversation only.
+- [x] Locally verified: `python3 os_lab_app.py` serves the separate scheduling demonstration at `http://127.0.0.1:8001`.
+- [x] Locally verified: all 5 focused scheduler HTTP integration tests passed; the latest complete Phase 2 suite also passed all 154 tests.
+- [x] Manually verified: synthetic requests P101/Asha and P102/Rahul were scheduled with FCFS, SJF, Priority and Round Robin; observed orders and waiting/turnaround metrics matched the expected calculations.
+- [x] Manually verified: both synthetic requests remained visible after a browser refresh.
+- [ ] Browser screenshots supplied in the conversation have not been committed as repository image files.
 
-The browser integration is verified for the tested two-process scheduling scenario. It is a local synthetic-data prototype, not a connection to real government services. Phase 2 concurrency and memory demonstrations remain separate teaching modules. Exact commands, test output, observed metrics and limitations are recorded in `EVIDENCE_LOG.md`.
-
-
-- [x] Manually verified: after registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed both records remained visible. JSON-backed persistence across a page refresh is verified for this test data.
-
-
-## Final verification — 2026-11-03
-
-- Phase 1: `python3 -m unittest discover -s phase-1/tests -v` — **17 tests passed**, 0 failures, 0 errors.
-- Phase 2: `PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v` — **154 tests passed**, 0 failures, 0 errors (3.972 seconds).
-- These were separate local runs. Combined reported total: **171 passing tests across both phases**, not a single combined test command.
-- Phase 2 includes the corrected scheduler web integration tests, citizen portal tests and administrator dashboard tests. ResourceWarnings from HTTP error-response cleanup appeared in the output; the tests themselves passed.
-- Treat this as the latest verification record; earlier historical test counts above are retained to show incremental development.
+This scheduling interface is an educational user-space demonstration using synthetic requests. It is separate from the CivicOne citizen portal. Exact commands, outputs and limitations are recorded in `EVIDENCE_LOG.md` and `FINAL_BROWSER_INTEGRATION.md`.
