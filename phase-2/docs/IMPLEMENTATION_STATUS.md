@@ -81,3 +81,15 @@ The project owner ran Python compilation, all three new CLI commands and the com
 
 
 - Latest complete local verification (2026-11-03): **138 tests passed, 0 failures, 0 errors** (0.348 seconds), including the six new syllabus-gap tests. See `EVIDENCE_LOG.md` for exact commands and outputs.
+
+
+## Browser integration — locally verified (2026-11-03)
+
+- [x] Locally verified: browser server starts with `python3 web_app.py` and serves the interface at `http://127.0.0.1:8000`.
+- [x] Locally verified: all 5 focused HTTP integration tests passed on the project owner's Ubuntu machine (2.541 seconds; 0 failures and 0 errors).
+- [x] Manually verified in browser: two synthetic service requests (P101/Asha and P102/Rahul) were registered and displayed in READY state.
+- [x] Manually verified in browser: FCFS, SJF (non-preemptive), Priority (non-preemptive), and Round Robin (q=2) produced the expected two-process execution orders and waiting/turnaround metrics.
+- [ ] Manual browser refresh/persistence confirmation remains pending; the supplied screenshots do not show a refresh followed by the records remaining visible.
+- [ ] Screenshot files have not yet been committed to the repository; current evidence is present in the conversation only.
+
+The browser integration is verified for the tested two-process scheduling scenario. It is a local synthetic-data prototype, not a connection to real government services. Phase 2 concurrency and memory demonstrations remain separate teaching modules. Exact commands, test output, observed metrics and limitations are recorded in `EVIDENCE_LOG.md`.
