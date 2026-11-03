@@ -1,97 +1,94 @@
 #!/usr/bin/env python3
-"""Local browser interface integrating the Phase 1 service scheduler.
+"""Citizen-facing local web portal for the Integrated National Citizen Services Platform.
 
-Run from the repository root:
-  python3 web_app.py
-Then open http://127.0.0.1:8000. Uses only the Python standard library.
-This is a local academic prototype with synthetic records, not a public service.
+Run: python3 web_app.py
+Open: http://127.0.0.1:8000
+Academic prototype only: synthetic records, no government integration or authentication.
 """
 from __future__ import annotations
 import json
+import re
+import secrets
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
-import sys
 
 ROOT = Path(__file__).resolve().parent
-DATA_FILE = ROOT / "data" / "web_requests.json"
-PHASE1_SRC = ROOT / "phase-1" / "src"
-if str(PHASE1_SRC) not in sys.path:
-    sys.path.insert(0, str(PHASE1_SRC))
-from citizen_os.models import ServiceProcess
-from citizen_os.scheduler import fcfs, sjf, priority, round_robin
+DATA_FILE = ROOT / "data" / "citizen_applications.json"
 
-ALGORITHMS = {"fcfs": fcfs, "sjf": sjf, "priority": priority, "rr": round_robin}
+SERVICES = [
+    {"id":"birth-certificate","name":"Birth Certificate","category":"Certificates","description":"Apply for a birth certificate or request a certified copy of an existing record.","time":"7–10 working days","documents":["Proof of birth","Parent or guardian identity proof","Address proof"],"icon":"BC"},
+    {"id":"income-certificate","name":"Income Certificate","category":"Certificates","description":"Submit a request for an income certificate for education, benefits or official purposes.","time":"7–10 working days","documents":["Identity proof","Address proof","Income supporting document"],"icon":"IC"},
+    {"id":"identity-update","name":"Identity Details Update","category":"Identity","description":"Request an update to basic identity or contact details in this demonstration workflow.","time":"5–7 working days","documents":["Identity proof","Supporting document for requested change"],"icon":"ID"},
+    {"id":"grievance","name":"Public Grievance","category":"Grievances","description":"Register a civic-service grievance and receive a reference number for follow-up.","time":"3–5 working days for acknowledgement","documents":["Relevant service reference (if available)","Supporting evidence (optional)"],"icon":"GR"},
+    {"id":"property-tax","name":"Property Tax Enquiry","category":"Tax","description":"Submit a property-tax enquiry or request a payment-status clarification.","time":"3–5 working days","documents":["Property or assessment reference","Applicant identity proof"],"icon":"TX"},
+    {"id":"pension-enquiry","name":"Pension Enquiry","category":"Social Welfare","description":"Raise a pension-related enquiry for this academic service-platform prototype.","time":"5–7 working days","documents":["Pension reference (if available)","Identity proof"],"icon":"PE"},
+]
 
-INDEX = r"""<!doctype html>
+PAGE = r"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Citizen Services | Operations Console</title>
+<meta name="theme-color" content="#102b46"><title>CivicOne — Citizen Services</title>
 <style>
-:root{--ink:#182536;--muted:#64748b;--line:#e4eaf1;--paper:#f5f7fb;--blue:#2457a7;--navy:#12233d;--green:#16845b}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px Inter,system-ui,Arial,sans-serif}
-.top{background:var(--navy);color:white;padding:22px max(5vw,24px);display:flex;justify-content:space-between;align-items:center;gap:18px}
-.brand{font-weight:750;letter-spacing:.2px;font-size:18px}.sub{color:#c3d0e2;font-size:12px;margin-top:5px}.badge{border:1px solid #526780;border-radius:30px;padding:7px 12px;font-size:11px;color:#d9e5f3}
-main{max-width:1120px;margin:30px auto;padding:0 22px}.intro{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:22px}h1{font-size:28px;margin:0 0 6px}.muted{color:var(--muted)}
-.grid{display:grid;grid-template-columns:340px 1fr;gap:20px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 5px 18px #172b4d08}
-h2{font-size:16px;margin:0 0 16px}.field{margin:12px 0}label{display:block;font-size:12px;font-weight:650;color:#42536a;margin-bottom:6px}
-input,select{width:100%;border:1px solid #d8e0ea;border-radius:8px;padding:10px 11px;font:inherit;background:white;color:var(--ink)}
-button{border:0;border-radius:8px;padding:10px 14px;background:var(--blue);color:white;font-weight:650;cursor:pointer}button.secondary{background:#eaf0f8;color:#25436b}button:disabled{opacity:.5;cursor:not-allowed}
-.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.stat{background:#f7f9fc;border:1px solid var(--line);border-radius:10px;padding:12px}.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted)}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px}
-.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e8f5ef;color:#16714e;font-size:11px;font-weight:700}.empty{text-align:center;color:var(--muted);padding:28px}
-.timeline{display:flex;gap:4px;flex-wrap:wrap;margin-top:12px}.segment{background:#e8effa;border:1px solid #cbd9ed;border-radius:7px;padding:8px 10px;font-size:12px}.notice{margin-top:14px;padding:11px;border-radius:9px;background:#f0f5fb;color:#53657d;font-size:12px}
-.error{color:#b42318;font-size:12px;margin-top:8px}.success{color:var(--green);font-size:12px;margin-top:8px}.footer{margin:22px 0;color:#8290a3;font-size:11px;text-align:center}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.intro{display:block}.stats{grid-template-columns:repeat(3,1fr)}}@media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.top{align-items:flex-start;flex-direction:column}}
+:root{--navy:#102b46;--blue:#245d86;--teal:#0d8278;--ink:#172b3c;--muted:#657789;--line:#e4ebef;--bg:#f5f8fa;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}.wrap{width:min(1160px,calc(100% - 40px));margin:auto}
+header{background:var(--navy);color:#fff}.top{height:76px;display:flex;align-items:center;justify-content:space-between}.logo{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}.mark{width:38px;height:38px;border-radius:11px;background:#e6f4f2;color:var(--teal);display:grid;place-items:center;font-weight:900}.brand small{display:block;font-size:10px;color:#b8cad8;letter-spacing:1.5px;margin-top:3px}.nav{display:flex;gap:26px;color:#d9e5ee;font-size:13px}.nav a:hover{color:#fff}.hero{background:linear-gradient(115deg,#102b46 0%,#174c69 65%,#167e7a 130%);color:white;padding:58px 0 64px}.hero-grid{display:grid;grid-template-columns:1.4fr .6fr;align-items:center;gap:35px}.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#9bd5cf;font-weight:750}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-1.6px;margin:15px 0}.hero p{color:#d3e1e9;max-width:620px;line-height:1.7;margin:0 0 24px}.cta{display:inline-flex;background:#f3fbf9;color:#145c5b;border-radius:8px;padding:12px 17px;font-weight:750;font-size:13px}.hero-note{border:1px solid #ffffff35;background:#ffffff12;border-radius:16px;padding:23px}.hero-note strong{font-size:27px;display:block}.hero-note span{font-size:12px;color:#c8dce5;line-height:1.6}.main{padding:38px 0 70px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:0 0 20px}.section-head h2{font-size:23px;margin:0 0 5px;letter-spacing:-.5px}.muted{color:var(--muted);font-size:13px}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.service{background:#fff;border:1px solid var(--line);border-radius:13px;padding:19px;transition:.18s;box-shadow:0 4px 16px #19354a08}.service:hover{transform:translateY(-3px);box-shadow:0 12px 26px #19354a12;border-color:#bfd5df}.icon{width:40px;height:40px;border-radius:10px;background:#eaf4f4;color:#167b76;display:grid;place-items:center;font-size:11px;font-weight:850}.tag{font-size:10px;color:#167b76;font-weight:750;text-transform:uppercase;letter-spacing:1px;margin-top:17px}.service h3{font-size:16px;margin:7px 0}.service p{font-size:12px;color:var(--muted);line-height:1.6;min-height:58px}.service-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:13px;font-size:11px;color:var(--muted)}.link{color:#176c78;font-weight:750;cursor:pointer;background:none;border:0;padding:0;font:inherit}.track{margin-top:38px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:25px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}.track h2{margin:0 0 7px;font-size:21px}.track-form{display:flex;gap:8px}.track-form input,.field input,.field textarea,.field select{width:100%;border:1px solid #d8e2e8;border-radius:8px;padding:11px 12px;font:inherit;font-size:13px;background:#fff;color:var(--ink)}button{border:0;border-radius:8px;background:var(--teal);color:white;font-weight:750;padding:11px 16px;cursor:pointer;white-space:nowrap}.result{margin-top:12px;font-size:12px;line-height:1.6}.modal-back{position:fixed;inset:0;background:#0d2039a8;display:none;align-items:center;justify-content:center;padding:20px;z-index:5}.modal-back.open{display:flex}.modal{background:white;border-radius:16px;width:min(560px,100%);max-height:90vh;overflow:auto;padding:25px;box-shadow:0 25px 80px #071a2a55}.modal-head{display:flex;justify-content:space-between;align-items:start}.modal h2{margin:0 0 5px}.close{background:#edf2f5;color:#30485a;padding:7px 11px}.field{margin:13px 0}.field label{display:block;font-size:11px;font-weight:750;margin-bottom:6px;color:#43596a}.field textarea{min-height:88px;resize:vertical}.field small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.docs{background:#f3f7f8;border-radius:9px;padding:12px 14px;font-size:12px;color:#536979;line-height:1.7}.success-box{background:#eaf7f2;border:1px solid #c8e9dc;color:#176347;border-radius:10px;padding:17px;margin-top:14px}.success-box strong{font-size:20px;display:block;margin:6px 0}.notice{font-size:11px;color:#748696;line-height:1.6;margin-top:18px}footer{background:#102b46;color:#b9cbd7;padding:25px 0;font-size:11px}.footer-row{display:flex;justify-content:space-between;gap:20px}.hidden{display:none!important}
+@media(max-width:800px){.hero-grid{grid-template-columns:1fr}.hero-note{display:none}.services{grid-template-columns:repeat(2,1fr)}.track{grid-template-columns:1fr}.nav{gap:12px}}
+@media(max-width:540px){.wrap{width:calc(100% - 28px)}.top{height:66px}.nav a:not(:last-child){display:none}.hero{padding:43px 0}.services{grid-template-columns:1fr}.section-head{display:block}.track-form{flex-direction:column}.footer-row{display:block}.footer-row span{display:block;margin-top:8px}}
 </style></head><body>
-<header class="top"><div><div class="brand">CIVIC / OPERATIONS</div><div class="sub">Integrated National Citizen Services Platform · Academic prototype</div></div><div class="badge">LOCAL DEMO · SYNTHETIC DATA</div></header>
-<main><div class="intro"><div><h1>Service operations</h1><div class="muted">Register sample service requests and simulate their CPU scheduling.</div></div><div class="muted" id="clock"></div></div>
-<div class="grid"><section class="card"><h2>New service request</h2><form id="requestForm">
-<div class="field"><label for="citizen">Citizen name</label><input id="citizen" required maxlength="60" placeholder="e.g. Asha Verma"></div>
-<div class="field"><label for="service">Service category</label><select id="service"><option>Certificate services</option><option>Identity services</option><option>Grievance redressal</option><option>Tax services</option></select></div>
-<div class="field"><label for="burst">Estimated CPU burst (units)</label><input id="burst" type="number" min="1" max="1000" value="4" required></div>
-<div class="field"><label for="arrival">Arrival time</label><input id="arrival" type="number" min="0" max="10000" value="0" required></div>
-<div class="field"><label for="priority">Priority (1 = highest)</label><input id="priority" type="number" min="1" max="10" value="2" required></div>
-<button type="submit">Add request</button><div id="formMessage" aria-live="polite"></div></form>
-<div class="notice">Requests are stored locally in a JSON file. Use fictional names only; this prototype has no authentication or external-service connection.</div></section>
-<section><div class="card"><div class="row" style="justify-content:space-between"><h2>Request queue</h2><div class="row"><select id="algorithm" aria-label="Scheduling algorithm"><option value="fcfs">FCFS</option><option value="sjf">SJF (non-preemptive)</option><option value="priority">Priority (non-preemptive)</option><option value="rr">Round Robin</option></select><button id="runSchedule">Run schedule</button></div></div>
-<div class="stats"><div class="stat"><b id="total">0</b><span>Total requests</span></div><div class="stat"><b id="avgWait">—</b><span>Average waiting</span></div><div class="stat"><b id="avgTurn">—</b><span>Average turnaround</span></div></div>
-<div style="overflow-x:auto"><table><thead><tr><th>PID</th><th>Citizen</th><th>Service</th><th>Burst</th><th>Arrival</th><th>State</th></tr></thead><tbody id="requests"></tbody></table></div><div id="empty" class="empty">No requests yet. Add a synthetic request to begin.</div>
-<div id="scheduleResult" hidden><h2 style="margin-top:20px">Schedule result</h2><div id="algorithmName" class="muted"></div><div class="timeline" id="timeline"></div><div style="overflow-x:auto;margin-top:12px"><table><thead><tr><th>PID</th><th>Start</th><th>Finish</th><th>Waiting</th><th>Turnaround</th></tr></thead><tbody id="scheduled"></tbody></table></div></div>
-<div id="scheduleMessage" aria-live="polite"></div></div></section></div>
-<div class="footer">Operating Systems PBL · Modules 1–4 teaching prototype · No real government records or services</div></main>
+<header><div class="wrap top"><a class="logo" href="/"><span class="mark">C</span><span class="brand">CivicOne<small>NATIONAL CITIZEN SERVICES</small></span></a><nav class="nav"><a href="#services">Services</a><a href="#track">Track application</a><a href="#about">About</a></nav></div></header>
+<section class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">One platform. Essential services.</div><h1>Public services,<br>made simpler.</h1><p>Explore citizen services, submit a request and keep track of your application from one place. A unified academic prototype for a more connected service experience.</p><a class="cta" href="#services">Explore services&nbsp; →</a></div><aside class="hero-note"><strong>One place to begin.</strong><span>Discover services, understand the documents you may need and get a reference number for every submitted application.</span></aside></div></section>
+<main class="wrap main" id="services"><div class="section-head"><div><h2>Explore citizen services</h2><div class="muted">Choose a service to view its details and start an application.</div></div><div class="muted" id="serviceCount">Loading services…</div></div><div class="services" id="serviceGrid"></div>
+<section class="track" id="track"><div><div class="eyebrow" style="color:#16827a">Application updates</div><h2>Track your application</h2><div class="muted">Enter the reference number received after submission.</div></div><div><form class="track-form" id="trackForm"><input id="reference" placeholder="e.g. CIV-2026-A1B2C3" required aria-label="Application reference"><button>Track status</button></form><div class="result" id="trackResult" aria-live="polite"></div></div></section>
+<p class="notice" id="about">Academic demonstration only. This platform uses locally stored sample applications and is not connected to government databases, identity providers or payment gateways. Do not submit real personal or sensitive information.</p></main>
+<footer><div class="wrap footer-row"><strong>CivicOne · Integrated National Citizen Services Platform</strong><span>Operating Systems PBL · Academic prototype · Group 66</span></div></footer>
+<div class="modal-back" id="modal"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-head"><div><h2 id="modalTitle">Apply for a service</h2><div class="muted" id="modalSubtitle"></div></div><button class="close" id="closeModal" type="button">✕</button></div><div id="applyContent"><form id="applyForm"><input type="hidden" id="serviceId"><div class="docs" id="documents"></div><div class="field"><label for="applicant">Applicant name</label><input id="applicant" maxlength="70" required placeholder="Enter your name"></div><div class="field"><label for="email">Email address</label><input id="email" type="email" maxlength="120" required placeholder="name@example.com"></div><div class="field"><label for="mobile">Mobile number</label><input id="mobile" inputmode="numeric" pattern="[0-9]{10}" required placeholder="10-digit mobile number"><small>Use fictional details for this local demonstration.</small></div><div class="field"><label for="details">Application details</label><textarea id="details" maxlength="1000" required placeholder="Briefly describe your request…"></textarea></div><button type="submit">Submit application</button><div class="result" id="applyError"></div></form></div><div id="submitted" class="hidden"></div></section></div>
 <script>
-const $=id=>document.getElementById(id);
-async function api(url,opts={}){const r=await fetch(url,{headers:{"Content-Type":"application/json"},...opts});const d=await r.json();if(!r.ok)throw Error(d.error||"Request failed");return d}
-function esc(s){return String(s).replace(/[&<>"\x27]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\x27":"&#39;"}[c]))}
-async function load(){const d=await api("/api/requests");$("total").textContent=d.requests.length;$("requests").innerHTML=d.requests.map(x=>`<tr><td>${x.pid}</td><td>${esc(x.citizen)}</td><td>${esc(x.service)}</td><td>${x.burst}</td><td>${x.arrival}</td><td><span class="pill">READY</span></td></tr>`).join("");$("empty").hidden=d.requests.length>0}
-$("requestForm").addEventListener("submit",async e=>{e.preventDefault();$("formMessage").textContent="";try{const d=await api("/api/requests",{method:"POST",body:JSON.stringify({citizen:$("citizen").value,service:$("service").value,burst:Number($("burst").value),arrival:Number($("arrival").value),priority:Number($("priority").value)})});$("formMessage").className="success";$("formMessage").textContent=`Request PID ${d.request.pid} saved.`;$("citizen").value="";await load()}catch(err){$("formMessage").className="error";$("formMessage").textContent=err.message}});
-$("runSchedule").addEventListener("click",async()=>{try{const d=await api("/api/schedule",{method:"POST",body:JSON.stringify({algorithm:$("algorithm").value})});$("avgWait").textContent=d.average_waiting.toFixed(2);$("avgTurn").textContent=d.average_turnaround.toFixed(2);$("algorithmName").textContent=d.algorithm;$("timeline").innerHTML=d.timeline.map(x=>`<span class="segment">P${x.pid} · ${x.start}–${x.finish}</span>`).join("");$("scheduled").innerHTML=d.processes.map(x=>`<tr><td>${x.pid}</td><td>${x.start}</td><td>${x.finish}</td><td>${x.waiting}</td><td>${x.turnaround}</td></tr>`).join("");$("scheduleResult").hidden=false;$("scheduleMessage").className="success";$("scheduleMessage").textContent="Schedule simulation completed."}catch(err){$("scheduleMessage").className="error";$("scheduleMessage").textContent=err.message}});
-$("clock").textContent=new Date().toLocaleString();load().catch(e=>$("scheduleMessage").textContent=e.message);
+const $=id=>document.getElementById(id);let services=[];
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function request(url,options={}){const r=await fetch(url,{headers:{'Content-Type':'application/json'},...options});const d=await r.json();if(!r.ok)throw Error(d.error||'Something went wrong');return d}
+function renderServices(){ $('serviceCount').textContent=services.length+' services available';$('serviceGrid').innerHTML=services.map(s=>`<article class="service"><div class="icon">${esc(s.icon)}</div><div class="tag">${esc(s.category)}</div><h3>${esc(s.name)}</h3><p>${esc(s.description)}</p><div class="service-foot"><span>Typical demo timeline: ${esc(s.time)}</span><button class="link" data-service="${esc(s.id)}">Apply →</button></div></article>`).join('');document.querySelectorAll('[data-service]').forEach(b=>b.addEventListener('click',()=>openApplication(b.dataset.service)))}
+function openApplication(id){const s=services.find(x=>x.id===id);if(!s)return;$('modalTitle').textContent=s.name;$('modalSubtitle').textContent='New service application';$('serviceId').value=id;$('documents').innerHTML='<strong>Documents to prepare</strong><br>'+s.documents.map(esc).join('<br>');$('applyForm').reset();$('serviceId').value=id;$('applyContent').classList.remove('hidden');$('submitted').classList.add('hidden');$('modal').classList.add('open');$('applicant').focus()}
+$('closeModal').addEventListener('click',()=>$('modal').classList.remove('open'));$('modal').addEventListener('click',e=>{if(e.target===$('modal'))$('modal').classList.remove('open')});document.addEventListener('keydown',e=>{if(e.key==='Escape')$('modal').classList.remove('open')});
+$('applyForm').addEventListener('submit',async e=>{e.preventDefault();$('applyError').textContent='Submitting…';try{const d=await request('/api/applications',{method:'POST',body:JSON.stringify({service_id:$('serviceId').value,name:$('applicant').value,email:$('email').value,mobile:$('mobile').value,details:$('details').value})});$('applyContent').classList.add('hidden');$('submitted').classList.remove('hidden');$('submitted').innerHTML='<div class="success-box">Application submitted successfully.<strong>'+esc(d.application.reference)+'</strong><span>Keep this reference number to track your application. Current status: Submitted.</span></div><p class="muted">This reference is also saved in this browser for your convenience.</p><button id="done" type="button">Done</button>';$('done').addEventListener('click',()=>$('modal').classList.remove('open'));localStorage.setItem('civicone-last-reference',d.application.reference)}catch(err){$('applyError').textContent=err.message}});
+$('trackForm').addEventListener('submit',async e=>{e.preventDefault();$('trackResult').textContent='Looking up application…';try{const d=await request('/api/applications/'+encodeURIComponent($('reference').value.trim()));$('trackResult').innerHTML='<div class="success-box"><b>'+esc(d.application.service)+'</b><br>Reference: '+esc(d.application.reference)+'<br>Status: <b>'+esc(d.application.status)+'</b><br>Submitted: '+esc(d.application.submitted_at)+'</div>'}catch(err){$('trackResult').textContent=err.message}});
+const saved=localStorage.getItem('civicone-last-reference');if(saved)$('reference').value=saved;
+request('/api/services').then(d=>{services=d.services;renderServices()}).catch(e=>$('serviceGrid').textContent=e.message);
 </script></body></html>"""
 
-def load_requests():
+def read_store():
     if not DATA_FILE.exists():
         return []
     try:
-        payload = json.loads(DATA_FILE.read_text(encoding="utf-8"))
-        if not isinstance(payload, list):
-            raise ValueError("Stored request data must be a JSON list")
-        return payload
-    except (json.JSONDecodeError, OSError) as exc:
-        raise ValueError(f"Cannot read request store: {exc}") from exc
+        data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+        if not isinstance(data, list):
+            raise ValueError("Application store is not a list")
+        return data
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Unable to read application store: {exc}") from exc
 
-def save_requests(requests):
+def write_store(items):
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-    temporary = DATA_FILE.with_suffix(".tmp")
-    temporary.write_text(json.dumps(requests, ensure_ascii=False, indent=2), encoding="utf-8")
-    temporary.replace(DATA_FILE)
+    temp = DATA_FILE.with_suffix(".tmp")
+    temp.write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")
+    temp.replace(DATA_FILE)
+
+def clean_text(value, label, limit):
+    if not isinstance(value, str):
+        raise ValueError(f"{label} is required")
+    value = value.strip()
+    if not value or len(value) > limit:
+        raise ValueError(f"{label} must be between 1 and {limit} characters")
+    return value
 
 class Handler(BaseHTTPRequestHandler):
-    def _send(self, status, payload, content_type="application/json; charset=utf-8"):
-        body = payload.encode("utf-8") if isinstance(payload, str) else json.dumps(payload).encode("utf-8")
+    def send_json(self, status, payload):
+        body = json.dumps(payload, ensure_ascii=False).encode()
         self.send_response(status)
-        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(body)
@@ -99,77 +96,70 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
         if path == "/":
-            return self._send(200, INDEX, "text/html; charset=utf-8")
-        if path == "/api/requests":
+            body = PAGE.encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if path == "/api/services":
+            return self.send_json(200, {"services": SERVICES})
+        match = re.fullmatch(r"/api/applications/([A-Za-z0-9-]{6,40})", path)
+        if match:
             try:
-                return self._send(200, {"requests": load_requests()})
+                app = next((x for x in read_store() if x["reference"].lower() == match.group(1).lower()), None)
             except ValueError as exc:
-                return self._send(500, {"error": str(exc)})
-        return self._send(404, {"error": "Not found"})
+                return self.send_json(500, {"error": str(exc)})
+            if not app:
+                return self.send_json(404, {"error": "No application found for that reference number."})
+            return self.send_json(200, {"application": {k: app[k] for k in ("reference", "service", "status", "submitted_at")}})
+        return self.send_json(404, {"error": "Not found"})
 
     def do_POST(self):
-        path = urlparse(self.path).path
-        if path not in {"/api/requests", "/api/schedule"}:
-            return self._send(404, {"error": "Not found"})
+        if urlparse(self.path).path != "/api/applications":
+            return self.send_json(404, {"error": "Not found"})
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if length < 1 or length > 16_384:
-                raise ValueError("Request body must be between 1 and 16384 bytes")
+            if length < 1 or length > 8192:
+                raise ValueError("Invalid request size")
             data = json.loads(self.rfile.read(length).decode("utf-8"))
             if not isinstance(data, dict):
-                raise ValueError("JSON body must be an object")
-            if path == "/api/requests":
-                return self._add_request(data)
-            return self._schedule(data)
+                raise ValueError("Request must be a JSON object")
+            service = next((s for s in SERVICES if s["id"] == data.get("service_id")), None)
+            if not service:
+                raise ValueError("Select a valid service")
+            name = clean_text(data.get("name"), "Applicant name", 70)
+            email = clean_text(data.get("email"), "Email", 120)
+            mobile = clean_text(data.get("mobile"), "Mobile number", 10)
+            details = clean_text(data.get("details"), "Application details", 1000)
+            if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+                raise ValueError("Enter a valid email address")
+            if not re.fullmatch(r"[0-9]{10}", mobile):
+                raise ValueError("Mobile number must contain exactly 10 digits")
+            items = read_store()
+            reference = "CIV-2026-" + secrets.token_hex(3).upper()
+            app = {"reference": reference, "service_id": service["id"], "service": service["name"], "name": name, "email": email, "mobile": mobile, "details": details, "status": "Submitted", "submitted_at": datetime.now(timezone.utc).astimezone().strftime("%d %b %Y, %I:%M %p")}
+            items.append(app)
+            write_store(items)
+            return self.send_json(201, {"application": {"reference": reference, "service": service["name"], "status": app["status"], "submitted_at": app["submitted_at"]}})
         except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-            return self._send(400, {"error": str(exc)})
-
-    def _add_request(self, data):
-        citizen = str(data.get("citizen", "")).strip()
-        service = str(data.get("service", "")).strip()
-        if not citizen or len(citizen) > 60:
-            raise ValueError("Citizen name is required and must be at most 60 characters")
-        allowed = {"Certificate services", "Identity services", "Grievance redressal", "Tax services"}
-        if service not in allowed:
-            raise ValueError("Choose a supported service category")
-        burst, arrival, prio = data.get("burst"), data.get("arrival"), data.get("priority", 1)
-        if any(isinstance(v, bool) or not isinstance(v, int) for v in (burst, arrival, prio)):
-            raise ValueError("Burst, arrival and priority must be integers")
-        if not 1 <= burst <= 1000 or not 0 <= arrival <= 10000 or not 1 <= prio <= 10:
-            raise ValueError("Burst must be 1–1000, arrival 0–10000 and priority 1–10")
-        requests = load_requests()
-        pid = max((int(x["pid"]) for x in requests), default=100) + 1
-        item = {"pid": pid, "citizen": citizen, "service": service, "burst": burst, "arrival": arrival, "priority": prio}
-        requests.append(item)
-        save_requests(requests)
-        return self._send(201, {"request": item})
-
-    def _schedule(self, data):
-        algorithm = data.get("algorithm", "fcfs")
-        if algorithm not in ALGORITHMS:
-            raise ValueError("Algorithm must be fcfs, sjf, priority or rr")
-        requests = load_requests()
-        if not requests:
-            raise ValueError("Add at least one service request before scheduling")
-        processes = [ServiceProcess(x["pid"], x["citizen"], x["service"], x["burst"], x["arrival"], x["priority"]) for x in requests]
-        result = ALGORITHMS[algorithm](processes)
-        timeline = [{"pid": pid, "start": start, "finish": finish} for pid, start, finish in result.timeline]
-        rows = [{"pid": p.pid, "citizen": p.citizen_name, "service": p.service_name, "start": p.start_time, "finish": p.completion_time, "waiting": p.waiting_time, "turnaround": p.turnaround_time} for p in result.processes]
-        return self._send(200, {"algorithm": result.algorithm, "average_waiting": result.average_waiting_time, "average_turnaround": result.average_turnaround_time, "timeline": timeline, "processes": rows})
+            return self.send_json(400, {"error": str(exc)})
 
     def log_message(self, fmt, *args):
-        print(f"[web] {self.address_string()} {fmt % args}")
+        print("[portal] %s %s" % (self.address_string(), fmt % args))
 
 def create_server(host="127.0.0.1", port=8000):
     return ThreadingHTTPServer((host, port), Handler)
 
 if __name__ == "__main__":
     server = create_server()
-    print("Integrated National Citizen Services Platform")
-    print("Open http://127.0.0.1:8000 in your browser (Ctrl+C to stop)")
+    print("CivicOne citizen services portal")
+    print("Open http://127.0.0.1:8000 (Ctrl+C to stop)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\nShutting down...")
+        print("\nShutting down…")
     finally:
         server.server_close()
