@@ -9,6 +9,7 @@ from citizen_os.address_translation import run_paging_demo, run_segmentation_dem
 from citizen_os.page_replacement import run_demand_paging_demo, run_page_replacement_comparison, run_belady_anomaly_demo
 from citizen_os.working_set import run_working_set_demo, run_thrashing_demo
 from citizen_os.loading_linking import run_loading_linking_demo
+from citizen_os.file_disk import run_file_management_demo, run_disk_scheduling_demo
 from citizen_os.deadlock import (
     database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
     resource_allocation_graph_demo, run_bankers_demo,
@@ -68,6 +69,8 @@ def main() -> None:
     sub.add_parser("working-set-demo", help="show trailing working sets and frame pressure")
     sub.add_parser("thrashing-demo", help="demonstrate thrashing risk using the working-set model")
     sub.add_parser("loading-linking-demo", help="demonstrate symbol linking, module loading and address binding")
+    sub.add_parser("file-management-demo", help="demonstrate file access and allocation methods")
+    sub.add_parser("disk-scheduling-demo", help="compare FCFS, SSTF, SCAN, C-SCAN, LOOK and C-LOOK")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -145,6 +148,12 @@ def main() -> None:
     elif args.command == "loading-linking-demo":
         result = run_loading_linking_demo()
         label = "Loading, linking and address-binding demonstration"
+    elif args.command == "file-management-demo":
+        result = run_file_management_demo()
+        label = "File access and allocation demonstration"
+    elif args.command == "disk-scheduling-demo":
+        result = run_disk_scheduling_demo()
+        label = "Disk scheduling algorithm comparison"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
