@@ -33,7 +33,8 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: Belady's anomaly demonstration (FIFO: 9 faults with 3 frames, 10 with 4 frames).
 - [x] Locally verified: working-set model and thrashing-risk indicator (10 new tests; full suite passed 77 tests).
 - [x] Locally verified: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (25 new tests; full suite passed 113 tests).
-- [x] Locally verified: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (19 new tests; full suite passed 132 tests).
+- [x] Locally verified: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (19 tests; full suite passed 132 tests).
+- [x] Locally verified: explicit non-atomic lock-variable interleaving, common process classifications, and demand-paging effective-access-time scenarios (6 new tests; full suite passed 138 tests).
 
 ## Verification record
 
@@ -61,15 +62,18 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 ## Syllabus audit outcome
 
-The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The current 132-test suite verifies the implemented demonstrations, but Phase 2 is not yet declared fully syllabus-complete. Outstanding or partial coverage includes an explicit lock-variable demonstration and process-type explanation, effective-access-time/performance analysis for demand paging, the Windows 10 virtual-memory case study, genuine CUDA source/execution evidence, and real VM configuration evidence if required by the assessor. See the audit for exact scope and recommended closure order.
+The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The current 138-test suite verifies the implemented Python demonstrations. The lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally. The Windows 10 case study is documented research, not a local Windows measurement. The optional CUDA kernel has not been compiled or run on a GPU, and the VM model has not booted a real guest OS. See the audit for exact scope and remaining evidence requirements.
 
 
 ## Additional syllabus items added — verification pending
 
-- [ ] Source added: explicit non-atomic lock-variable interleaving and common process classifications (`concurrency_concepts.py`).
-- [ ] Source added: demand-paging effective-access-time formula and illustrative page-fault-rate scenarios (`demand_paging_performance.py`).
+- [x] Locally verified: explicit non-atomic lock-variable interleaving and common process classifications (`concurrency_concepts.py`); CLI commands completed and six new tests passed.
+- [x] Locally verified: demand-paging effective-access-time formula and four illustrative page-fault-rate scenarios (`demand_paging_performance.py`); CLI completed and six new tests passed.
 - [x] Research case study drafted: Windows 10 page-file, commit charge/limit, hard-fault counters and performance implications (`WINDOWS_10_VIRTUAL_MEMORY_CASE_STUDY.md`). This is sourced research, not a local Windows measurement.
 - [ ] Optional CUDA kernel source added (`cuda/vector_add.cu`). Compilation and execution with `nvcc` on a CUDA-capable GPU are pending.
 - [ ] Real VM creation/configuration remains pending if the assessor expects a hands-on hypervisor demonstration. Existing VM code is only a resource configuration model.
 
-The new Python commands and six additional tests have not yet been run by the project owner. Do not mark them verified until terminal output is supplied.
+The project owner ran Python compilation, all three new CLI commands and the complete test suite on Ubuntu on 2026-11-03. The suite passed 138 tests with 0 failures and 0 errors in 0.348 seconds. Exact outputs and the illustrative EAT assumptions are recorded in `EVIDENCE_LOG.md`. CUDA compilation/execution and real VM configuration remain pending.
+
+
+- Latest complete local verification (2026-11-03): **138 tests passed, 0 failures, 0 errors** (0.348 seconds), including the six new syllabus-gap tests. See `EVIDENCE_LOG.md` for exact commands and outputs.
