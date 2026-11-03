@@ -33,7 +33,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: Belady's anomaly demonstration (FIFO: 9 faults with 3 frames, 10 with 4 frames).
 - [x] Locally verified: working-set model and thrashing-risk indicator (10 new tests; full suite passed 77 tests).
 - [x] Locally verified: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (25 new tests; full suite passed 113 tests).
-- [ ] Source added; local verification pending: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (18 new tests).
+- [ ] Source added; local verification pending: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (19 new tests).
 
 ## Verification record
 
