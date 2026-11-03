@@ -3,7 +3,6 @@
 // Run with: ./vector_add
 #include <cuda_runtime.h>
 #include <iostream>
-#include <vector>
 #include <cstdlib>
 
 __global__ void vector_add(const int* a, const int* b, int* c, int n) {
@@ -22,7 +21,7 @@ int main() {
 
     auto check = [](cudaError_t status, const char* operation) {
         if (status != cudaSuccess) {
-            std::cerr << operation << ": " << cudaGetErrorString(status) << "\\n";
+            std::cerr << operation << ": " << cudaGetErrorString(status) << "\n";
             std::exit(EXIT_FAILURE);
         }
     };
