@@ -40,6 +40,8 @@ def allocate_file_blocks(method: str, file_name: str, block_count: int, disk_blo
         raise ValueError("invalid block count, disk size or start block")
     if block_count > disk_blocks:
         raise ValueError("file cannot contain more blocks than the disk")
+    if method in ("linked", "indexed") and block_count > disk_blocks - 1:
+        raise ValueError("allocation requires one block for metadata or pointers")
     if method == "contiguous":
         if start_block + block_count > disk_blocks:
             raise ValueError("contiguous file allocation exceeds disk boundary")
@@ -100,9 +102,9 @@ def schedule_disk_requests(requests: Sequence[int], head: int, algorithm: str,
                 service_order = left + ([0] if not left or left[-1] != 0 else []) + list(reversed(right))
         elif algorithm == "c-scan":
             if direction == "right":
-                service_order = right + [disk_size - 1, 0] + sorted(left)
+                service_order = right + ([disk_size - 1] if not right or right[-1] != disk_size - 1 else []) + [0] + sorted(left)
             else:
-                service_order = left + [0, disk_size - 1] + sorted(right, reverse=True)
+                service_order = left + ([0] if not left or left[-1] != 0 else []) + [disk_size - 1] + sorted(right, reverse=True)
         elif algorithm == "look":
             service_order = (right + left) if direction == "right" else (left + list(reversed(right)))
         else:  # C-LOOK
