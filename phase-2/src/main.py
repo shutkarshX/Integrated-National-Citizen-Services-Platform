@@ -4,6 +4,7 @@ import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
 from citizen_os.concurrency_concepts import run_lock_variable_demo, explain_process_types
 from citizen_os.demand_paging_performance import compare_demand_paging_scenarios
+from citizen_os.memory_management_concepts import explain_memory_management_functions
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
 from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo
@@ -79,6 +80,7 @@ def main() -> None:
     sub.add_parser("lock-variable-demo", help="show why a non-atomic lock variable fails mutual exclusion")
     sub.add_parser("process-types", help="explain common OS process classifications")
     sub.add_parser("demand-paging-performance", help="calculate effective access time under illustrative page-fault rates")
+    sub.add_parser("memory-management-functions", help="explain the operating system memory manager responsibilities")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -177,6 +179,9 @@ def main() -> None:
     elif args.command == "demand-paging-performance":
         result = compare_demand_paging_scenarios()
         label = "Demand-paging effective access time scenarios"
+    elif args.command == "memory-management-functions":
+        result = explain_memory_management_functions()
+        label = "Operating-system memory management functions"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
