@@ -89,7 +89,10 @@ The project owner ran Python compilation, all three new CLI commands and the com
 - [x] Locally verified: all 5 focused HTTP integration tests passed on the project owner's Ubuntu machine (2.541 seconds; 0 failures and 0 errors).
 - [x] Manually verified in browser: two synthetic service requests (P101/Asha and P102/Rahul) were registered and displayed in READY state.
 - [x] Manually verified in browser: FCFS, SJF (non-preemptive), Priority (non-preemptive), and Round Robin (q=2) produced the expected two-process execution orders and waiting/turnaround metrics.
-- [ ] Manual browser refresh/persistence confirmation remains pending; the supplied screenshots do not show a refresh followed by the records remaining visible.
+- [x] Manually verified: after registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed both records remained visible; JSON-backed persistence across a page refresh is verified for this test data.
 - [ ] Screenshot files have not yet been committed to the repository; current evidence is present in the conversation only.
 
 The browser integration is verified for the tested two-process scheduling scenario. It is a local synthetic-data prototype, not a connection to real government services. Phase 2 concurrency and memory demonstrations remain separate teaching modules. Exact commands, test output, observed metrics and limitations are recorded in `EVIDENCE_LOG.md`.
+
+
+- [x] Manually verified: after registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed both records remained visible. JSON-backed persistence across a page refresh is verified for this test data.
