@@ -33,7 +33,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: Belady's anomaly demonstration (FIFO: 9 faults with 3 frames, 10 with 4 frames).
 - [x] Locally verified: working-set model and thrashing-risk indicator (10 new tests; full suite passed 77 tests).
 - [x] Locally verified: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (25 new tests; full suite passed 113 tests).
-- [ ] Virtual machines, hypervisors, GPU and CUDA introduction.
+- [ ] Source added; local verification pending: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (18 new tests).
 
 ## Verification record
 
@@ -55,3 +55,5 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - Loading/linking/address-binding locally verified on 2026-11-03: compilation passed; CLI demo resolved and relocated `calculate_tax` to address 4384; full suite passed 88 tests with 0 failures and 0 errors.
 
 - File management and disk scheduling locally verified on 2026-11-03: compilation passed; both CLI demos completed; full suite passed 113 tests with 0 failures and 0 errors (0.363 seconds).
+
+- Virtualization/hypervisor and GPU/CUDA demonstrations added on 2026-11-03; compilation, CLI execution and full-suite verification are pending.
