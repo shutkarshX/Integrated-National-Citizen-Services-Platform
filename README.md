@@ -101,3 +101,22 @@ These are possible next steps after the current baseline is tested and reviewed.
 - Academic year: 2026–27
 
 The submitted Report 1 remains the historical record of what was submitted. This repository records the implementation baseline separately; dates and progress claims should reflect actual work and evidence.
+
+
+## Final browser integration
+
+A local browser interface now connects the Phase 1 citizen-service process model and CPU scheduling simulations:
+
+```bash
+python3 web_app.py
+```
+
+Open `http://127.0.0.1:8000`. It supports synthetic service-request entry, JSON persistence, and FCFS, SJF, Priority and Round Robin scheduling. It is a local academic prototype only; it has no authentication and does not connect to government systems.
+
+Run the HTTP integration tests:
+
+```bash
+PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_web_integration.py' -v
+```
+
+See [Final Browser Integration](phase-2/docs/FINAL_BROWSER_INTEGRATION.md) for manual acceptance steps. Source implementation is committed; owner-side execution and browser screenshots are still required before claiming verified completion.
