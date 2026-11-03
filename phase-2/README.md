@@ -92,7 +92,7 @@ This is a user-space educational model, not a kernel thrashing detector. Local v
 
 ## Remaining scope
 
-Loading/linking/address binding, file access/allocation and disk scheduling, virtualization/hypervisors, and GPU/CUDA introduction remain pending.
+Loading/linking/address binding and file access/allocation with disk scheduling are implemented and locally verified. Virtualization/hypervisors and GPU/CUDA introduction have now been implemented; local verification is pending.
 
 
 ## Loading, linking and address binding — source added
@@ -122,3 +122,18 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 These are in-memory teaching simulations, not real filesystem modifications or physical disk I/O. Local verification is pending; see the implementation tracker and evidence log.
+
+
+## Virtual machines, hypervisors and GPU/CUDA — source added
+
+The virtualization demonstration validates a VM's virtual CPU and memory request against host capacity and contrasts Type-1 (bare-metal) and Type-2 (hosted) hypervisors. The CUDA demonstration explains host/device roles and the grid–block–thread hierarchy, then simulates global thread indexing for vector addition, including bounds checks for a partially filled final block.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py virtualization-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py cuda-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+These are educational CPU-side models. The VM model does not boot a guest OS, and the CUDA model does not execute on a GPU or require a CUDA runtime. Local verification is pending; see the implementation tracker and evidence log.
