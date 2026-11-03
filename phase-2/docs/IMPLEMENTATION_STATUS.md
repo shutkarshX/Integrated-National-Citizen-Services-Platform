@@ -32,7 +32,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: demand paging and FIFO, LRU, Optimal, LFU page replacement (3 CLI demonstrations; full suite passed 67 tests).
 - [x] Locally verified: Belady's anomaly demonstration (FIFO: 9 faults with 3 frames, 10 with 4 frames).
 - [x] Locally verified: working-set model and thrashing-risk indicator (10 new tests; full suite passed 77 tests).
-- [ ] Source added; local verification pending: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (21 new tests).
+- [ ] Source added; local verification pending: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (25 new tests).
 - [ ] Virtual machines, hypervisors, GPU and CUDA introduction.
 
 ## Verification record
