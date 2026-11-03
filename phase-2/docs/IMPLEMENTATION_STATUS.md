@@ -62,3 +62,14 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 ## Syllabus audit outcome
 
 The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The current 132-test suite verifies the implemented demonstrations, but Phase 2 is not yet declared fully syllabus-complete. Outstanding or partial coverage includes an explicit lock-variable demonstration and process-type explanation, effective-access-time/performance analysis for demand paging, the Windows 10 virtual-memory case study, genuine CUDA source/execution evidence, and real VM configuration evidence if required by the assessor. See the audit for exact scope and recommended closure order.
+
+
+## Additional syllabus items added — verification pending
+
+- [ ] Source added: explicit non-atomic lock-variable interleaving and common process classifications (`concurrency_concepts.py`).
+- [ ] Source added: demand-paging effective-access-time formula and illustrative page-fault-rate scenarios (`demand_paging_performance.py`).
+- [x] Research case study drafted: Windows 10 page-file, commit charge/limit, hard-fault counters and performance implications (`WINDOWS_10_VIRTUAL_MEMORY_CASE_STUDY.md`). This is sourced research, not a local Windows measurement.
+- [ ] Optional CUDA kernel source added (`cuda/vector_add.cu`). Compilation and execution with `nvcc` on a CUDA-capable GPU are pending.
+- [ ] Real VM creation/configuration remains pending if the assessor expects a hands-on hypervisor demonstration. Existing VM code is only a resource configuration model.
+
+The new Python commands and six additional tests have not yet been run by the project owner. Do not mark them verified until terminal output is supplied.
