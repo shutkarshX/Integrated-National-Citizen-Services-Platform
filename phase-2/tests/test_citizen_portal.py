@@ -28,8 +28,11 @@ class CitizenPortalTests(unittest.TestCase):
         cls.temp.cleanup()
 
     def get_json(self, path):
-        with urlopen(self.base + path) as response:
-            return response.status, json.loads(response.read())
+        try:
+            with urlopen(self.base + path) as response:
+                return response.status, json.loads(response.read())
+        except HTTPError as exc:
+            return exc.code, json.loads(exc.read())
 
     def post_json(self, path, payload):
         req = Request(self.base + path, data=json.dumps(payload).encode(),
