@@ -734,3 +734,8 @@ The observed execution orders and metrics match the expected calculations for th
 - The screenshots are evidence supplied in the conversation and have not been committed as image files in the repository.
 - The browser interface is a local academic prototype using synthetic data and JSON-file storage. It does not connect to real government services or store real citizen records.
 - This browser verification covers the integrated Phase 1 scheduling workflow. Phase 2 concurrency and memory demonstrations remain separate teaching modules.
+
+
+### Manual persistence refresh check — confirmed by project owner (2026-11-03)
+
+After registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed that both requests remained visible in the queue. This confirms the JSON-backed request persistence across a browser page refresh for the tested records.
