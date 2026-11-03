@@ -1,122 +1,70 @@
 # Integrated National Citizen Services Platform
 
-**Operating Systems PBL — implementation baseline**
+**Operating Systems PBL · CCSE0303A · Group 66**
 
-An educational command-line simulation of citizen-service requests, built to demonstrate operating-system concepts through a small, inspectable Python project.
+An academic web application prototype that models a unified citizen-service experience. Citizens can explore a catalogue of sample services, submit a synthetic application, receive a reference number and look up its current status. The application workflow is supported by OS concepts implemented and studied across the project phases.
 
-## Scope
+> This is an educational prototype. It is not an official government portal, does not connect to government databases or payment gateways, and must only be used with fictional demonstration information.
 
-The simulator models four synthetic service categories:
-- Certificate services
-- Identity services
-- Grievance redressal
-- Tax services
+## Run the citizen-facing website
 
-Each service request is represented as a simulated process. Its request ID acts as a process identifier, and the request stores PCB-like metadata: lifecycle state, arrival time, burst time, start time, finish time, waiting time, and turnaround time. The current scheduler uses deterministic First-Come, First-Served (FCFS) processing. Demo records are stored as JSON.
-
-> This is an academic simulation. It does not connect to real government systems and uses synthetic demo data only.
-
-## Requirements
-
-- Python 3.10+ (standard library only)
-
-## Run
-
-```bash
-python main.py
-```
-
-## Run tests
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-## Phase 1 Linux / shell automation check
-
-On Linux or WSL, run this from the repository root:
-
-```bash
-bash scripts/phase1_check.sh
-```
-
-It checks required project files, runs the unit tests, and launches the synthetic CLI demo. It does not install packages or contact external services. The first run on your machine is still required before claiming either script has been verified. On Windows PowerShell, use the native equivalent:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\\scripts\\phase1_check.ps1
-```
-
-See [the Phase 1 syllabus coverage checklist](docs/PHASE_1_CHECKLIST.md) for the Module 1–2 gap audit and [Phase 1 OS concept notes](docs/PHASE_1_OS_CONCEPTS.md) for syllabus-aligned explanations, plus the [Phase 1 evidence pack](docs/PHASE_1_EVIDENCE_PACK.md) for the process lifecycle diagram, FCFS Gantt chart, formulas, and practical evidence records.
-
-## Implemented
-
-- `ServiceRequest` model with process lifecycle states: NEW, READY, RUNNING, WAITING, TERMINATED
-- PCB-like scheduling metadata: arrival, burst, start, finish, waiting, and turnaround times
-- FCFS sequential processing, including requests with later arrival times
-- JSON save/load helpers
-- CLI demonstration using synthetic requests
-- Unit tests for scheduler timing, lifecycle outcome, repeat runs, and storage behavior
-
-## Scheduling definitions
-
-- **Waiting time** = start time − arrival time
-- **Turnaround time** = finish time − arrival time
-- **Finish time** = start time + burst time
-
-The current implementation is deliberately single-threaded. FCFS processes requests in the supplied list order; it does not sort requests by arrival time. A later-arriving request causes the simulated CPU clock to wait until that request's arrival only when the clock is earlier than its arrival time.
-
-## Not yet implemented
-
-- Concurrent processing or real synchronization primitives
-- Blocking/wakeup simulation for waiting requests
-- Alternate CPU scheduling algorithms such as Round Robin or Priority
-- Deadlock experiments or role-based access control
-- A web interface or integration with real public services
-
-These are possible next steps after the current baseline is tested and reviewed.
-
-## Project structure
-
-```text
-.
-├── main.py
-├── os_platform/
-│   ├── __init__.py
-│   ├── models.py
-│   ├── scheduler.py
-│   └── storage.py
-├── data/
-│   └── demo_requests.json
-└── tests/
-    ├── test_scheduler.py
-    └── test_storage.py
-```
-
-## Academic context
-
-- Course: Operating Systems
-- Course code: CCSE0303A
-- Group: 66
-- Project title: Integrated National Citizen Services Platform
-- Academic year: 2026–27
-
-The submitted Report 1 remains the historical record of what was submitted. This repository records the implementation baseline separately; dates and progress claims should reflect actual work and evidence.
-
-
-## Final browser integration
-
-A local browser interface now connects the Phase 1 citizen-service process model and CPU scheduling simulations:
+Requires Python 3.10+; no third-party packages are required.
 
 ```bash
 python3 web_app.py
 ```
 
-Open `http://127.0.0.1:8000`. It supports synthetic service-request entry, JSON persistence, and FCFS, SJF, Priority and Round Robin scheduling. It is a local academic prototype only; it has no authentication and does not connect to government systems.
+Open **http://127.0.0.1:8000**.
 
-Run the HTTP integration tests:
+The portal currently includes a service catalogue, service-specific application form, input validation, locally persisted application records, generated reference numbers and status lookup. Records are stored in `data/citizen_applications.json`.
+
+## OS scheduling demonstration
+
+The CPU scheduling browser demonstration is retained separately so it does not define the citizen-facing experience:
+
+```bash
+python3 os_lab_app.py
+```
+
+Open **http://127.0.0.1:8001**. It demonstrates synthetic process requests, FCFS, SJF, Priority and Round Robin scheduling. The OS lab uses its own local JSON store.
+
+## Tests
+
+Citizen portal HTTP tests:
+
+```bash
+PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_citizen_portal.py' -v
+```
+
+OS lab HTTP tests:
 
 ```bash
 PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_web_integration.py' -v
 ```
 
-See [Final Browser Integration](phase-2/docs/FINAL_BROWSER_INTEGRATION.md) for manual acceptance steps. Source implementation is committed; owner-side execution and browser screenshots are still required before claiming verified completion.
+Phase 1 tests:
+
+```bash
+python3 -m unittest discover -s phase-1/tests -v
+```
+
+Phase 2 tests:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+## Project structure
+
+- `web_app.py` — citizen-facing web portal.
+- `os_lab_app.py` — separate browser-based CPU scheduling teaching demo.
+- `os_platform/` — original repository-root process model and FCFS baseline.
+- `phase-1/` — Phase 1 process, thread and scheduling work, notes and evidence.
+- `phase-2/` — Phase 2 concurrency, deadlock, memory and storage demonstrations, tests and reports.
+- `data/` — local synthetic demonstration records.
+
+## Important scope notes
+
+Applications are locally stored and initially receive the status **Submitted**. This prototype does not provide real identity verification, staff review, notifications, document uploads, payments or live government-service fulfilment. Status lookup returns only the reference, service, status and submission timestamp; it does not expose the stored contact fields.
+
+The OS simulations are user-space educational models. They do not modify the Linux kernel scheduler, implement kernel internals or represent measured production-government workloads. Claims about hardware execution must be limited to the tests and environments actually used.
