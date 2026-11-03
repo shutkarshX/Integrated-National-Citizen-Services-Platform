@@ -84,6 +84,6 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 
 ## Important scope notes
 
-Applications are locally stored and initially receive the status **Submitted**. This prototype does not provide real identity verification, staff review, notifications, document uploads, payments or live government-service fulfilment. Status lookup returns only the reference, service, status and submission timestamp; it does not expose the stored contact fields.
+Applications are locally stored and initially receive the status **Submitted**. The local administrator dashboard can change a demo application's status and record a simple status history; this is not a real staff review or government fulfilment workflow. The prototype does not provide real identity verification, notifications, document uploads, payments or live government-service fulfilment. Status lookup returns only the reference, service, status and submission timestamp; it does not expose the stored contact fields.
 
 The OS simulations are user-space educational models. They do not modify the Linux kernel scheduler, implement kernel internals or represent measured production-government workloads. Claims about hardware execution must be limited to the tests and environments actually used.
