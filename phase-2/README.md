@@ -74,3 +74,22 @@ These are user-space educational simulations, not kernel virtual-memory implemen
 ## Remaining scope
 
 Loading/linking/address binding, paging/segmentation, thrashing, file and disk management, virtualization, and GPU/CUDA introduction remain pending. Loading/linking/address binding also remains pending.
+
+
+## Working-set model and thrashing risk — source added
+
+The working-set demonstration calculates the distinct pages referenced in a trailing window and compares that active set with the process's allocated frames. When the working set exceeds the allocation, the demonstration flags memory pressure as a thrashing risk.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py working-set-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py thrashing-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+This is a user-space educational model, not a kernel thrashing detector. Local verification is pending. See `phase-2/docs/IMPLEMENTATION_STATUS.md` and `phase-2/docs/EVIDENCE_LOG.md` for status.
+
+## Remaining scope
+
+Loading/linking/address binding, file access/allocation and disk scheduling, virtualization/hypervisors, and GPU/CUDA introduction remain pending.
