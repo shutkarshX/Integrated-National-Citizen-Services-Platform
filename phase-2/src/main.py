@@ -10,6 +10,7 @@ from citizen_os.page_replacement import run_demand_paging_demo, run_page_replace
 from citizen_os.working_set import run_working_set_demo, run_thrashing_demo
 from citizen_os.loading_linking import run_loading_linking_demo
 from citizen_os.file_disk import run_file_management_demo, run_disk_scheduling_demo
+from citizen_os.virtualization_cuda import run_virtualization_demo, run_cuda_demo
 from citizen_os.deadlock import (
     database_transaction_deadlock_case_study, deadlock_conditions_and_prevention, detect_deadlock, recover_by_terminating_victim,
     resource_allocation_graph_demo, run_bankers_demo,
@@ -71,6 +72,8 @@ def main() -> None:
     sub.add_parser("loading-linking-demo", help="demonstrate symbol linking, module loading and address binding")
     sub.add_parser("file-management-demo", help="demonstrate file access and allocation methods")
     sub.add_parser("disk-scheduling-demo", help="compare FCFS, SSTF, SCAN, C-SCAN, LOOK and C-LOOK")
+    sub.add_parser("virtualization-demo", help="demonstrate VM resource configuration and hypervisor types")
+    sub.add_parser("cuda-demo", help="simulate CUDA grid, block and thread indexing with vector addition")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -154,6 +157,12 @@ def main() -> None:
     elif args.command == "disk-scheduling-demo":
         result = run_disk_scheduling_demo()
         label = "Disk scheduling algorithm comparison"
+    elif args.command == "virtualization-demo":
+        result = run_virtualization_demo()
+        label = "Virtual machine and hypervisor demonstration"
+    elif args.command == "cuda-demo":
+        result = run_cuda_demo()
+        label = "CUDA execution model and vector-addition simulation"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
