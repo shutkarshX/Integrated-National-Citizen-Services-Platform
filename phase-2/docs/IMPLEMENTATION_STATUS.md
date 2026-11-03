@@ -63,7 +63,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 
 ## Syllabus audit outcome
 
-The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The latest owner-run 140-test suite verifies the implemented Python demonstrations. The lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally. The Windows 10 case study is documented research, not a local Windows measurement. The optional CUDA kernel has not been compiled or run on a GPU, and the VM model has not booted a real guest OS. See the audit for exact scope and remaining evidence requirements.
+The official CCSE0303A syllabus-to-code audit is recorded in `SYLLABUS_AUDIT.md`. The latest owner-run Phase 2 suite passed 154 tests; the separate Phase 1 suite passed 17 tests. The lock-variable interleaving, common process classifications and effective-access-time calculation have now been run locally. The Windows 10 case study is documented research, not a local Windows measurement. The optional CUDA kernel has not been compiled or run on a GPU, and the VM model has not booted a real guest OS. See the audit for exact scope and remaining evidence requirements.
 
 
 ## Additional syllabus items added — verification pending
@@ -96,3 +96,12 @@ The browser integration is verified for the tested two-process scheduling scenar
 
 
 - [x] Manually verified: after registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed both records remained visible. JSON-backed persistence across a page refresh is verified for this test data.
+
+
+## Final verification — 2026-11-03
+
+- Phase 1: `python3 -m unittest discover -s phase-1/tests -v` — **17 tests passed**, 0 failures, 0 errors.
+- Phase 2: `PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v` — **154 tests passed**, 0 failures, 0 errors (3.972 seconds).
+- These were separate local runs. Combined reported total: **171 passing tests across both phases**, not a single combined test command.
+- Phase 2 includes the corrected scheduler web integration tests, citizen portal tests and administrator dashboard tests. ResourceWarnings from HTTP error-response cleanup appeared in the output; the tests themselves passed.
+- Treat this as the latest verification record; earlier historical test counts above are retained to show incremental development.
