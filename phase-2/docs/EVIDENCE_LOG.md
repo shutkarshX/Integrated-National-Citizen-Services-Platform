@@ -467,3 +467,46 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 The new test module contains 11 tests. This is a user-space teaching model, not a real object-file linker, executable loader, process loader or hardware address-translation implementation. Local verification is pending; actual output must be recorded after the project owner runs these commands.
+
+
+## Loading, linking and address binding — locally verified 2026-11-03
+
+The project owner pulled the implementation and ran compilation, the CLI demonstration and the complete test suite on the Ubuntu project machine.
+
+Compilation command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/loading_linking.py phase-2/src/main.py
+```
+
+Observed: compilation completed with no errors.
+
+CLI command:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py loading-linking-demo
+```
+
+Observed:
+- External reference `application:calculate_tax` resolved to the `tax_library` module.
+- Application module load base: 4096; size: 256.
+- Tax library load base: 4352; size: 128.
+- Relocated `calculate_tax` absolute address: 4384 (relative address 32 plus load base 4352).
+- Next free address after loading both modules: 4480.
+- The demo completed and printed compile-time, load-time and execution-time binding explanations.
+
+Full test command:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed:
+
+```text
+Ran 88 tests in 0.353s
+
+OK
+```
+
+All 88 tests reported `ok`; zero failures and zero errors. The loading/linking test module contributes 11 tests. The implementation remains an educational user-space model, not a real object-file linker, executable loader or hardware MMU.
