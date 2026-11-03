@@ -35,6 +35,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: sequential/direct/indexed access, contiguous/linked/indexed allocation, and FCFS/SSTF/SCAN/C-SCAN/LOOK/C-LOOK disk scheduling (25 new tests; full suite passed 113 tests).
 - [x] Locally verified: VM resource configuration, Type-1/Type-2 hypervisor concepts, CUDA execution hierarchy and CPU-side vector-addition kernel simulation (19 tests; full suite passed 132 tests).
 - [x] Locally verified: explicit non-atomic lock-variable interleaving, common process classifications, and demand-paging effective-access-time scenarios (6 new tests; full suite passed 138 tests).
+- [x] Locally verified: memory-management functions overview (tracking, allocation/reclamation, address translation, protection, sharing, virtual-memory support and fragmentation management); CLI output and 2 dedicated tests passed; full suite passed 140 tests.
 
 ## Verification record
 
