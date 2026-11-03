@@ -450,3 +450,20 @@ OK
 ```
 
 All 77 tests reported `ok`; zero failures and zero errors. The new working-set test module contributes 10 tests. This is an educational working-set/frame-pressure simulation, not an actual kernel thrashing detector or measurement of real page-fault frequency.
+
+
+## Loading, linking and address binding — source added, local verification pending
+
+Added `phase-2/src/citizen_os/loading_linking.py` and `phase-2/tests/test_loading_linking.py`.
+
+The module provides an educational model of external-symbol resolution across modules, loader-assigned consecutive load bases, relocation of exported symbol addresses, and load-base plus relative-address translation. The CLI command is `loading-linking-demo`. The demo includes compile-time, load-time and execution-time binding explanations.
+
+Run from the repository root after pulling:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/loading_linking.py phase-2/src/main.py
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py loading-linking-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+The new test module contains 11 tests. This is a user-space teaching model, not a real object-file linker, executable loader, process loader or hardware address-translation implementation. Local verification is pending; actual output must be recorded after the project owner runs these commands.
