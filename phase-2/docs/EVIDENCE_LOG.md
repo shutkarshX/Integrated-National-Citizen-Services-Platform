@@ -628,3 +628,20 @@ OK
 ```
 
 All 138 tests reported `ok`; zero failures and zero errors. The new `test_syllabus_gaps.py` module contributes six tests. This verifies the new Python demonstrations and their tests. It does not verify the optional CUDA `.cu` source, real VM creation, or Windows 10 runtime observations.
+
+
+## Memory-management functions overview — locally verified (2026-11-03)
+
+The project owner pulled the memory-management concepts module, compiled the CLI and module successfully, ran the `memory-management-functions` command, and executed the complete unittest suite on Ubuntu.
+
+The command printed explanations of memory tracking, allocation and reclamation, address translation, protection, controlled sharing, virtual-memory support and fragmentation management. Its scope note explicitly states that these are conceptual OS responsibilities and that the project does not implement a kernel memory manager.
+
+Compilation completed without errors. The complete suite reported:
+
+```text
+Ran 140 tests in 0.355s
+
+OK
+```
+
+The two new tests in `test_memory_management_concepts.py` passed. This confirms the explanatory content and its scope limitation are covered by tests; it does not turn the user-space demonstrations into a kernel memory manager.
