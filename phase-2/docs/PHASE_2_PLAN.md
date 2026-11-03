@@ -126,3 +126,8 @@ The exact module/file split may be refined after reviewing the existing Phase 1 
 - The final public-facing website and full UI integration; these belong to the Final integration stage.
 - Kernel modifications or claims that application-level simulations are kernel implementations.
 
+
+
+## Phase 2 scope freeze — 2026-11-03
+
+The Python implementation scope for Modules 3 and 4 is frozen for Progress Report II. The complete owner-run test suite passed 140 tests (0 failures, 0 errors; 0.355 seconds), and the owner ran the memory-management functions CLI successfully. No further feature is being represented as complete without corresponding implementation and owner-run evidence. Known practical limitations remain: CUDA source has not been compiled/executed on a GPU; the VM configuration is a model rather than a booted guest; and the Windows 10 case study is research-based rather than a local Windows experiment. Final browser-based integration remains a later project deliverable, not part of the claimed Phase 2 completion.
