@@ -137,3 +137,8 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 These are educational CPU-side models. The VM model does not boot a guest OS, and the CUDA model does not execute on a GPU or require a CUDA runtime. Local verification is pending; see the implementation tracker and evidence log.
+
+
+## Syllabus audit
+
+The official CCSE0303A Modules 3–4 coverage review is documented in [`docs/SYLLABUS_AUDIT.md`](docs/SYLLABUS_AUDIT.md). The current implementation suite passes 132 tests, but the audit identifies remaining syllabus-level gaps; passing tests alone is not treated as proof of complete syllabus coverage.
