@@ -71,9 +71,9 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 
 These are user-space educational simulations, not kernel virtual-memory implementations. The demand-paging, four-algorithm comparison and Belady anomaly demonstrations were locally verified on 2026-11-03; the complete suite passed 67 tests with 0 failures and 0 errors.
 
-## Remaining scope
+## Final browser integration
 
-Loading/linking/address binding, paging/segmentation, thrashing, file and disk management, virtualization, and GPU/CUDA introduction remain pending. Loading/linking/address binding also remains pending.
+The final browser integration is implemented at the repository root in `web_app.py`. It reuses the Phase 1 service-process model and CPU scheduling algorithms, provides local JSON persistence, and exposes FCFS, SJF, Priority and Round Robin through a browser UI. Run and verify it using `phase-2/docs/FINAL_BROWSER_INTEGRATION.md`. Owner-side tests and manual browser acceptance are still pending.
 
 
 ## Working-set model and thrashing risk — source added
