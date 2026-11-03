@@ -8,7 +8,7 @@ DISK_ALGORITHMS = ("fcfs", "sstf", "scan", "c-scan", "look", "c-look")
 def read_record(records: Sequence[object], method: str, *, position: int = 0, index: dict | None = None, key: object = None) -> dict[str, object]:
     """Read one record using sequential, direct or indexed access semantics."""
     if method not in ACCESS_METHODS:
-        raise ValueError(f"method must be one of: {", ".join(ACCESS_METHODS)}")
+        raise ValueError(f"method must be one of: {', '.join(ACCESS_METHODS)}")
     if method == "sequential":
         if not isinstance(position, int) or isinstance(position, bool) or not 0 <= position < len(records):
             raise ValueError("sequential position is outside the record sequence")
@@ -68,7 +68,7 @@ def schedule_disk_requests(requests: Sequence[int], head: int, algorithm: str,
                            disk_size: int = 200, direction: str = "right") -> dict[str, object]:
     """Schedule disk cylinder requests and calculate total head movement."""
     if algorithm not in DISK_ALGORITHMS:
-        raise ValueError(f"algorithm must be one of: {", ".join(DISK_ALGORITHMS)}")
+        raise ValueError(f"algorithm must be one of: {', '.join(DISK_ALGORITHMS)}")
     if not isinstance(disk_size, int) or isinstance(disk_size, bool) or disk_size <= 0:
         raise ValueError("disk_size must be a positive integer")
     if not isinstance(head, int) or isinstance(head, bool) or not 0 <= head < disk_size:
@@ -78,49 +78,43 @@ def schedule_disk_requests(requests: Sequence[int], head: int, algorithm: str,
     if any(not isinstance(r, int) or isinstance(r, bool) or not 0 <= r < disk_size for r in requests):
         raise ValueError("all requests must be valid disk cylinders")
     pending = list(requests)
-    order = []
-    movement_path = [head]
     current = head
+    path = [head]
+    service_order = []
 
     if algorithm == "fcfs":
-        order = pending[:]
+        service_order = pending[:]
     elif algorithm == "sstf":
         while pending:
             chosen = min(pending, key=lambda r: (abs(r - current), r))
-            order.append(chosen)
+            service_order.append(chosen)
             pending.remove(chosen)
             current = chosen
     else:
         left = sorted((r for r in pending if r < head), reverse=True)
         right = sorted(r for r in pending if r >= head)
-        if algorithm in ("scan", "c-scan"):
+        if algorithm == "scan":
             if direction == "right":
-                order = right + ( [disk_size - 1] if algorithm == "scan" and (not right or right[-1] != disk_size - 1) else [])
-                order += left[::-1] if algorithm == "scan" else []
-                if algorithm == "c-scan":
-                    order += [disk_size - 1, 0] + sorted(left)
+                service_order = right + ([disk_size - 1] if not right or right[-1] != disk_size - 1 else []) + left
             else:
-                order = left + ([0] if algorithm == "scan" and (not left or left[-1] != 0) else [])
-                order += right if algorithm == "scan" else []
-                if algorithm == "c-scan":
-                    order += [0, disk_size - 1] + sorted(right, reverse=True)
+                service_order = left + ([0] if not left or left[-1] != 0 else []) + list(reversed(right))
+        elif algorithm == "c-scan":
+            if direction == "right":
+                service_order = right + [disk_size - 1, 0] + sorted(left)
+            else:
+                service_order = left + [0, disk_size - 1] + sorted(right, reverse=True)
         elif algorithm == "look":
-            order = (sorted(r for r in pending if r >= head) + sorted(left, reverse=True)) if direction == "right" else (sorted(left, reverse=True) + sorted(r for r in pending if r >= head))
-        else:
-            order = (sorted(r for r in pending if r >= head) + sorted(left)) if direction == "right" else (sorted(left, reverse=True) + sorted((r for r in pending if r >= head), reverse=True))
+            service_order = (right + left) if direction == "right" else (left + list(reversed(right)))
+        else:  # C-LOOK
+            service_order = (right + sorted(left)) if direction == "right" else (left + sorted(right, reverse=True))
 
-    # SCAN-family orders include boundary/wrap markers; only real requests are serviced.
-    requested = set(requests)
-    for cylinder in order:
-        if cylinder in requested and cylinder not in movement_path[1:]:
-            pass
-        movement_path.append(cylinder)
-    total = sum(abs(movement_path[i] - movement_path[i - 1]) for i in range(1, len(movement_path)))
+    # Add each service point/boundary to the physical head path.
+    path.extend(service_order)
+    total = sum(abs(path[i] - path[i - 1]) for i in range(1, len(path)))
     return {"algorithm": algorithm.upper(), "initial_head": head, "direction": direction,
-            "disk_cylinders": f"0-{disk_size - 1}", "request_order": order,
-            "movement_path": movement_path, "total_head_movement": total,
+            "disk_cylinders": f"0-{disk_size - 1}", "request_order": service_order,
+            "movement_path": path, "total_head_movement": total,
             "average_movement_per_request": total / len(requests) if requests else 0.0}
-
 
 def run_file_management_demo() -> dict[str, object]:
     records = ["Asha", "Ravi", "Mina", "Kabir", "Zoya"]
