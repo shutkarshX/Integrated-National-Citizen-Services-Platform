@@ -71,9 +71,13 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 
 These are user-space educational simulations, not kernel virtual-memory implementations. The demand-paging, four-algorithm comparison and Belady anomaly demonstrations were locally verified on 2026-11-03; the complete suite passed 67 tests with 0 failures and 0 errors.
 
-## Final browser integration
+## Browser applications: citizen portal and OS lab
 
-The final browser integration is implemented at the repository root in `web_app.py`. It reuses the Phase 1 service-process model and CPU scheduling algorithms, provides local JSON persistence, and exposes FCFS, SJF, Priority and Round Robin through a browser UI. Run and verify it using `phase-2/docs/FINAL_BROWSER_INTEGRATION.md`. Owner-side tests and manual browser acceptance are still pending.
+The primary browser experience is the citizen-facing portal in repository-root `web_app.py`. It provides a service catalogue, application submission, generated reference numbers and status lookup using synthetic local records. Run it with `python3 web_app.py` and open `http://127.0.0.1:8000`.
+
+The CPU scheduling browser interface is preserved separately in `os_lab_app.py`, run with `python3 os_lab_app.py` at `http://127.0.0.1:8001`. It is an academic OS lab demonstration, not the citizen-facing website.
+
+Citizen portal tests: `PYTHONPATH=. python3 -m unittest discover -s phase-2/tests -p 'test_citizen_portal.py' -v`. Manual browser acceptance and screenshots must be performed on the owner machine. Both apps are local prototypes only; neither connects to government systems. See `phase-2/docs/FINAL_BROWSER_INTEGRATION.md`.
 
 
 ## Working-set model and thrashing risk — source added
