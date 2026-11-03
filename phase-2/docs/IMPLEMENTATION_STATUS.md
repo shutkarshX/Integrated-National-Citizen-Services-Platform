@@ -31,7 +31,7 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - [x] Locally verified: paging, segmentation and segmented-paging address translation (3 CLI demonstrations; full suite passed 55 tests).
 - [x] Locally verified: demand paging and FIFO, LRU, Optimal, LFU page replacement (3 CLI demonstrations; full suite passed 67 tests).
 - [x] Locally verified: Belady's anomaly demonstration (FIFO: 9 faults with 3 frames, 10 with 4 frames).
-- [ ] Thrashing.
+- [ ] Source added; local verification pending: working-set model and thrashing-risk indicator (10 new tests).
 - [ ] File access, file allocation and disk scheduling.
 - [ ] Virtual machines, hypervisors, GPU and CUDA introduction.
 
@@ -45,3 +45,5 @@ This tracker distinguishes source implementation from execution evidence. Verifi
 - All six deadlock CLI demonstrations executed successfully on the project owner's Ubuntu machine on 2026-11-03.
 - Exact outputs are recorded in `phase-2/docs/EVIDENCE_LOG.md`.
 - Detailed verified synchronization evidence is recorded in `phase-2/docs/EVIDENCE_LOG.md`.
+
+- Working-set/thrashing implementation added on 2026-11-03; local execution and full-suite verification are pending. Do not treat it as verified until the project owner runs the commands and reports the output.
