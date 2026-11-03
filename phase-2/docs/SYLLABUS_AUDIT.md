@@ -69,10 +69,10 @@ Therefore, a supposed "Module 5" is not part of this official course syllabus. F
 ### Partial or missing syllabus requirements
 
 - **Memory-management functions:** implementation focuses on allocation and address translation. A concise concept explanation of the OS memory manager's responsibilities (tracking, allocation/deallocation, protection, sharing and virtual-memory support) should be added to the study/report material.
-- **Performance of demand paging:** current code reports page faults and hits for reference strings and compares replacement algorithms. It does not yet calculate effective access time using memory access time, page-fault rate and page-fault service time, nor does it present a controlled performance-impact comparison. This is a concrete gap against the phrase "Performance of Demand Paging".
-- **Windows 10 virtual-memory case study:** not present in the Phase 2 source or evidence log. The official syllabus explicitly asks for virtual-memory management in a modern OS such as Windows 10 and how paging affects performance. A documented case study is still required. It must distinguish observed Windows behaviour from general virtual-memory theory and must not claim Windows internals were measured without actual evidence.
+- **Performance of demand paging:** `demand_paging_performance.py` now calculates effective access time using memory-access time, page-fault rate and page-fault service time, and compares four illustrative rates. Inputs are stated assumptions, not measured hardware timings.
+- **Windows 10 virtual-memory case study:** a sourced research case study is now in `WINDOWS_10_VIRTUAL_MEMORY_CASE_STUDY.md`. It explains page files, commit charge/limit, hard faults and performance counters, and gives an observation procedure. It is explicitly research-based; no local Windows 10 measurements or screenshots have been supplied.
 - **Virtual machines / hypervisor:** code validates a hypothetical VM resource configuration and explains Type-1 and Type-2 hypervisors. It does not configure or boot a real VM. This is useful conceptual evidence, but it does not fully demonstrate the CO4 phrase "configure virtual machines" if a hands-on configuration is expected.
-- **GPU and CUDA programming:** code explains the CUDA host/device and grid/block/thread concepts and simulates vector addition on the CPU. It does not contain or execute a CUDA `.cu` kernel, use `nvcc`, or run on a GPU. Treat this as an introductory CPU-side simulation, not completed GPU/CUDA programming practice.
+- **GPU and CUDA programming:** an optional CUDA vector-addition kernel source now exists at `cuda/vector_add.cu`, with build/run instructions in the README. It has not been compiled or executed with `nvcc` on a CUDA-capable GPU. The previously verified Python vector-addition remains a CPU-side simulation.
 
 ## Verification evidence reviewed
 
@@ -109,3 +109,8 @@ When drafting Phase 2 report content:
 ## Final audit decision
 
 **Current decision: Phase 2 implementation tests pass, but syllabus closure is pending.** The 132-test result is valid evidence for the current code. Do not describe Phase 2 as fully syllabus-complete until the missing and partial items above have either been completed or explicitly accepted as out of scope by the course assessor.
+
+
+## Follow-up work added after the initial audit
+
+The explicit lock-variable interleaving, common process classifications, effective-access-time calculation, Windows 10 research case study and optional CUDA kernel source have been added. Local verification of the new Python commands and tests is still pending owner execution. CUDA compilation/execution and real VM configuration are also pending hardware/environment evidence. Do not mark those as locally verified yet.
