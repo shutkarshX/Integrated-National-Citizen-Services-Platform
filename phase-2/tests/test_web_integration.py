@@ -12,7 +12,7 @@ class WebIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.store = Path(self.temp.name) / "requests.json"
-        self.patch = patch.object(web_app, "DATA_FILE", self.store)
+        self.patch = patch.object(os_lab_app, "DATA_FILE", self.store)
         self.patch.start()
         self.server = os_lab_app.create_server(port=0)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
