@@ -107,3 +107,18 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 This is an educational user-space model, not a real executable linker, loader or MMU. Local verification is pending; see `phase-2/docs/IMPLEMENTATION_STATUS.md` and `phase-2/docs/EVIDENCE_LOG.md`.
+
+
+## File management and disk scheduling — source added
+
+File access examples cover sequential, direct and indexed access. File allocation examples cover contiguous, linked and indexed allocation. Disk scheduling compares FCFS, SSTF, SCAN, C-SCAN, LOOK and C-LOOK, including initial head direction and total cylinder movement.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py file-management-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py disk-scheduling-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+These are in-memory teaching simulations, not real filesystem modifications or physical disk I/O. Local verification is pending; see the implementation tracker and evidence log.
