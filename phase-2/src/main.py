@@ -2,6 +2,8 @@
 """Command-line entry point for Phase 2 OS demonstrations."""
 import argparse
 from citizen_os.concurrency.counters import run_locked_counter, run_race_demo
+from citizen_os.concurrency_concepts import run_lock_variable_demo, explain_process_types
+from citizen_os.demand_paging_performance import compare_demand_paging_scenarios
 from citizen_os.concurrency.locks import run_lock_demo
 from citizen_os.concurrency.synchronization import run_pipe_ipc, run_producer_consumer
 from citizen_os.memory_allocation import run_fixed_partition_demo, run_variable_partition_demo
@@ -74,6 +76,9 @@ def main() -> None:
     sub.add_parser("disk-scheduling-demo", help="compare FCFS, SSTF, SCAN, C-SCAN, LOOK and C-LOOK")
     sub.add_parser("virtualization-demo", help="demonstrate VM resource configuration and hypervisor types")
     sub.add_parser("cuda-demo", help="simulate CUDA grid, block and thread indexing with vector addition")
+    sub.add_parser("lock-variable-demo", help="show why a non-atomic lock variable fails mutual exclusion")
+    sub.add_parser("process-types", help="explain common OS process classifications")
+    sub.add_parser("demand-paging-performance", help="calculate effective access time under illustrative page-fault rates")
 
     args = parser.parse_args()
     if args.command == "race-demo":
@@ -163,6 +168,15 @@ def main() -> None:
     elif args.command == "cuda-demo":
         result = run_cuda_demo()
         label = "CUDA execution model and vector-addition simulation"
+    elif args.command == "lock-variable-demo":
+        result = run_lock_variable_demo()
+        label = "Non-atomic lock-variable race demonstration"
+    elif args.command == "process-types":
+        result = explain_process_types()
+        label = "Common process classifications"
+    elif args.command == "demand-paging-performance":
+        result = compare_demand_paging_scenarios()
+        label = "Demand-paging effective access time scenarios"
     else:
         result = run_sleeping_barber(args.customers, args.chairs)
         label = "Sleeping Barber finite waiting-room demonstration"
