@@ -739,3 +739,30 @@ The observed execution orders and metrics match the expected calculations for th
 ### Manual persistence refresh check — confirmed by project owner (2026-11-03)
 
 After registering P101/Asha and P102/Rahul, the project owner refreshed the browser page and confirmed that both requests remained visible in the queue. This confirms the JSON-backed request persistence across a browser page refresh for the tested records.
+
+
+## Final full-suite verification — 2026-11-03
+
+The project owner pulled the latest branch changes, including the package-namespace compatibility fix and the scheduler integration-test update, then ran the Phase 2 suite on Ubuntu:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Observed result:
+
+```text
+Ran 154 tests in 3.972s
+
+OK
+```
+
+All 154 Phase 2 tests reported `ok`; zero failures and zero errors. This run includes the Phase 2 modules, citizen portal/admin tests and the scheduler browser integration tests. Python emitted ResourceWarnings while some HTTPError response objects were cleaned up; those warnings did not cause test failures.
+
+The separate Phase 1 suite was previously run by the project owner:
+
+```bash
+python3 -m unittest discover -s phase-1/tests -v
+```
+
+Observed: 17 tests, `OK`, zero failures and zero errors. The two commands are separate test runs; together they account for 171 passing tests across the two phases, not one combined test invocation.
