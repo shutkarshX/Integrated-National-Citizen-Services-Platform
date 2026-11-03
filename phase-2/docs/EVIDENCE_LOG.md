@@ -559,3 +559,16 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 Scope limitation: these are educational user-space demonstrations. The VM model does not create or boot a real virtual machine; the CUDA model runs on the CPU and does not invoke a CUDA runtime or GPU. Local verification is pending.
+
+
+## Virtual machines, hypervisors and GPU/CUDA — locally verified (2026-11-03)
+
+The project owner pulled the implementation and ran Python compilation, the virtualization demo, the CUDA demo, and the complete unittest suite on Ubuntu.
+
+Compilation completed without errors. The virtualization demo configured `OS-Lab-VM` with 2 virtual CPUs and 4 GB RAM on a host with 8 CPUs and 16 GB RAM. The reported CPU and memory capacity allocations were both 25%. The demo displayed Type-1 bare-metal and Type-2 hosted hypervisor descriptions and examples.
+
+The CUDA demo displayed the host/device roles, grid/block/thread hierarchy and global index formula `blockIdx.x * blockDim.x + threadIdx.x`. The CPU-side vector-addition simulation produced `[11, 22, 33, 44, 55, 66, 77]` from the two seven-element input vectors. With 4 threads per block, it launched 2 blocks (8 total threads): 7 active threads processed elements and 1 thread was inactive due to the bounds check.
+
+The complete test suite reported **132 tests passed, 0 failures, 0 errors** in **0.359 seconds**. This includes the 19 tests in `test_virtualization_cuda.py`.
+
+Scope limitation: VM configuration is not a real VM boot, and the CUDA calculation is a CPU-side simulation, not a GPU kernel execution.
