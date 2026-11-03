@@ -46,8 +46,8 @@ Therefore, a supposed "Module 5" is not part of this official course syllabus. F
 
 ### Partial or needs clearer syllabus mapping
 
-- **Types of process:** the current demonstrations use concurrent workers/processes, but there is no dedicated explanation or comparison of process types. Add a small conceptual section using the exact interpretation taught in the class material; do not guess whether the instructor means independent/cooperating or CPU-bound/I/O-bound processes without checking the lecture notes.
-- **Lock variable:** the current mutual-exclusion implementations include Peterson, Strict Alternation, Bakery and a Test-and-Set-style lock. A separate lock-variable technique is not clearly represented as its own algorithm/demo.
+- **Types of process:** `process-types` now explains independent/cooperating and CPU-bound/I/O-bound classifications. These are common classifications; confirm the exact set expected by the instructor's lecture notes.
+- **Lock variable:** `lock-variable-demo` now gives a deterministic interleaving where two processes both read an unlocked Boolean before either sets it, demonstrating why non-atomic check-then-set fails mutual exclusion. The owner ran the command successfully and the behaviour is covered by tests.
 - **Test-and-set lock:** `TestAndSetLock` uses Python's non-blocking `threading.Lock.acquire` as a user-space mutual-exclusion primitive. It is not an implementation of the hardware atomic Test-and-Set instruction. Keep this limitation explicit in the report and viva explanation.
 - **Database case study:** the wait-for graph is a valid educational simulation of transaction deadlock, but the syllabus names database systems such as Oracle or MySQL. The report must state that no production database integration or live DB experiment was performed unless one is later carried out.
 
@@ -103,12 +103,12 @@ When drafting Phase 2 report content:
 
 ## Recommended closure order
 
-1. Add an explicit lock-variable demonstration and a concise, syllabus-aligned explanation of process types after checking the relevant lecture slides.
-2. Extend demand-paging analysis to calculate effective access time and compare page-fault-rate scenarios using stated assumptions.
-3. Complete the Windows 10 virtual-memory case study with sourced, clearly attributed research and/or reproducible observations. If no Windows 10 environment is available, label it a documented research case study rather than a measured experiment.
-4. Add a small genuine CUDA `.cu` vector-addition source file and a documented optional `nvcc` build/run path. Only mark GPU execution verified if it is actually compiled and run on compatible hardware.
-5. Decide whether the assessment requires a real VM configuration. If yes, configure one in an available hypervisor and record screenshots/settings; otherwise retain the current conceptual simulation and label it accurately.
-6. Re-run the complete suite after code additions, update the evidence log, then prepare the Phase 2 report from verified material.
+1. The lock-variable interleaving, process-classification explanation and demand-paging EAT calculation have been implemented and locally verified; the complete suite now passes 138 tests.
+2. The Windows 10 case study is present as sourced research. If a Windows 10 machine becomes available, add reproducible counter observations; otherwise retain the explicit research-only limitation.
+3. The CUDA `.cu` source and optional `nvcc` instructions are present. Only mark GPU execution verified if it is actually compiled and run on compatible hardware.
+4. Decide whether the assessment requires a real VM configuration. If yes, configure one in an available hypervisor and record screenshots/settings; otherwise retain the conceptual simulation and label it accurately.
+5. Add a concise explanation of the OS memory manager's core functions to the study/report material; this conceptual syllabus point is not yet clearly represented in the code or documentation.
+6. Confirm with the assessor whether the research-only Windows case study, optional CUDA source and conceptual VM model meet the required practical depth. Then freeze Phase 2 scope and prepare Report II using only verified evidence.
 7. After Phase 2 closure, complete the final browser-based integration described in `PHASE_2_PLAN.md`.
 
 ## Final audit decision
