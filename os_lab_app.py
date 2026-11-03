@@ -18,6 +18,15 @@ DATA_FILE = ROOT / "data" / "web_requests.json"
 PHASE1_SRC = ROOT / "phase-1" / "src"
 if str(PHASE1_SRC) not in sys.path:
     sys.path.insert(0, str(PHASE1_SRC))
+
+# Phase 2 tests may already have imported citizen_os as a namespace package.
+# Add the Phase 1 package directory explicitly in that case; fresh processes
+# also discover Phase 2 modules through the extended Phase 1 package path.
+import citizen_os
+PHASE1_PACKAGE = str(PHASE1_SRC / "citizen_os")
+if PHASE1_PACKAGE not in citizen_os.__path__:
+    citizen_os.__path__.append(PHASE1_PACKAGE)
+
 from citizen_os.models import ServiceProcess
 from citizen_os.scheduler import fcfs, sjf, priority, round_robin
 
