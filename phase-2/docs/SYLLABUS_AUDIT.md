@@ -10,7 +10,7 @@
 
 The Phase 2 codebase's complete local test suite has now passed **140 tests**. The owner also ran the newly added lock-variable interleaving, process-classification and demand-paging effective-access-time commands. The implementation covers most Module 3 and Module 4 topics through deterministic user-space demonstrations. A successful test suite proves the implemented code works against its tests; it does not prove that every practical syllabus requirement has been performed on real hardware or in a target operating system.
 
-**Phase 2 is implementation-verified, with some practical evidence limitations still open.** The lock-variable and process-classification additions, EAT analysis and memory-management functions overview are locally verified. The Windows 10 item is a sourced research case study, not a local Windows experiment. A CUDA `.cu` source exists but has not been compiled/run on a GPU. The VM configuration remains a model rather than a booted guest.
+**Phase 2 implementation and final browser integration are verified for the tested scenarios, with practical evidence limitations still open.** The owner-run Python suite passed 140 tests; the browser integration's five HTTP tests passed; and the owner manually verified two-process FCFS, SJF, Priority and Round Robin results plus persistence across refresh. The lock-variable and process-classification additions, EAT analysis and memory-management functions overview are locally verified. The Windows 10 item is a sourced research case study, not a local Windows experiment. A CUDA `.cu` source exists but has not been compiled/run on a GPU. The VM configuration remains a model rather than a booted guest.
 
 This audit intentionally distinguishes:
 - **Implemented and tested:** source and tests exist, and the owner supplied successful local execution evidence.
@@ -109,11 +109,11 @@ When drafting Phase 2 report content:
 4. Decide whether the assessment requires a real VM configuration. If yes, configure one in an available hypervisor and record screenshots/settings; otherwise retain the conceptual simulation and label it accurately.
 5. Add a concise explanation of the OS memory manager's core functions to the study/report material; this conceptual syllabus point is not yet clearly represented in the code or documentation.
 6. Confirm with the assessor whether the research-only Windows case study, optional CUDA source and conceptual VM model meet the required practical depth. Then freeze Phase 2 scope and prepare Report II using only verified evidence.
-7. After Phase 2 closure, complete the final browser-based integration described in `PHASE_2_PLAN.md`.
+7. Final browser-based integration is now implemented and manually verified for the two-process scheduling scenario; its evidence is recorded in `EVIDENCE_LOG.md` and `IMPLEMENTATION_STATUS.md`.
 
 ## Final audit decision
 
-**Current decision: Phase 2 Python implementation and automated tests are verified (138/138), but practical syllabus closure remains conditional.** The lock-variable/process-type additions and demand-paging EAT analysis have been verified. The Windows 10 case study is research-only; the CUDA source has not been built or run on GPU hardware; and the VM model has not booted a guest. Do not claim those practical activities were performed. Confirm with the assessor whether research-based Windows coverage, optional CUDA source, and conceptual VM modelling satisfy the expected practical depth.
+**Current decision: Phase 2 Python implementation and final browser integration are verified for the documented test scenarios; practical syllabus closure remains conditional.** The owner-run Python suite passed 140/140 tests. The browser integration passed 5/5 focused HTTP tests and was manually verified with two synthetic requests across FCFS, SJF, Priority and Round Robin; a browser refresh also confirmed those two records persisted. The Windows 10 case study is research-only; the CUDA source has not been built or run on GPU hardware; and the VM model has not booted a guest. Do not claim those practical activities were performed. Confirm with the assessor whether research-based Windows coverage, optional CUDA source, and conceptual VM modelling satisfy the expected practical depth.
 
 
 ## Follow-up work added after the initial audit
@@ -129,3 +129,10 @@ A dedicated memory-management functions module, CLI command and two tests have b
 ## Phase 2 scope freeze — 2026-11-03
 
 The verified Python implementation scope for Modules 3 and 4 is frozen for Progress Report II. The owner-run suite passed 140 tests (0 failures, 0 errors; 0.355 seconds). Practical limitations remain explicit: CUDA source has not been compiled/executed on a GPU; the VM configuration is a model, not a booted guest; and the Windows 10 case study is research-based, not a local Windows experiment. Final browser-based integration remains a later project deliverable.
+
+
+## Final browser integration verification update — 2026-11-03
+
+The final integration stage described in the Phase 2 plan is no longer pending. The project owner ran the focused browser integration suite (5 tests, all passed), started `web_app.py`, registered two synthetic service requests, manually ran FCFS, non-preemptive SJF, non-preemptive Priority and Round Robin (q=2), and confirmed the requests remained visible after a browser refresh. Observed scheduling orders and waiting/turnaround metrics matched the expected calculations. Detailed commands and values are recorded in `EVIDENCE_LOG.md`.
+
+This closes the browser integration milestone for the tested scenario. It does **not** close the separate hardware/environment limitations: no Windows 10 local measurements, CUDA GPU execution, or real guest VM boot have been evidenced.
