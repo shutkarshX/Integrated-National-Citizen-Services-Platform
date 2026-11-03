@@ -417,3 +417,36 @@ PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
 ```
 
 The new implementation includes 10 focused tests. These commands have not yet been run on the project owner's Ubuntu machine; outputs and test count must be added after actual execution.
+
+
+## Working-set model and thrashing risk — locally verified 2026-11-03
+
+The project owner pulled the implementation and ran compilation, both demonstrations and the complete test suite on the Ubuntu project machine.
+
+Compilation:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/working_set.py phase-2/src/main.py
+```
+
+Observed: completed with no compilation errors.
+
+Commands executed:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py working-set-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py thrashing-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+Both demonstrations completed successfully. The sample reference string was `[1, 2, 3, 4, 5, 1, 2, 3, 4, 5]`, with a trailing window of 5 references and 3 allocated frames. Observed peak working-set size: 5 pages; memory-pressure steps: 7; `thrashing_risk_observed: True`.
+
+The complete test suite reported:
+
+```text
+Ran 77 tests in 0.432s
+
+OK
+```
+
+All 77 tests reported `ok`; zero failures and zero errors. The new working-set test module contributes 10 tests. This is an educational working-set/frame-pressure simulation, not an actual kernel thrashing detector or measurement of real page-fault frequency.
