@@ -93,3 +93,17 @@ This is a user-space educational model, not a kernel thrashing detector. Local v
 ## Remaining scope
 
 Loading/linking/address binding, file access/allocation and disk scheduling, virtualization/hypervisors, and GPU/CUDA introduction remain pending.
+
+
+## Loading, linking and address binding — source added
+
+The implementation models external-symbol resolution between modules, loader-assigned memory bases, relocation of exported symbols, and translation from a module-relative address to an absolute address. The demo also explains compile-time, load-time and execution-time address binding.
+
+Run from repository root:
+
+```bash
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py loading-linking-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+This is an educational user-space model, not a real executable linker, loader or MMU. Local verification is pending; see `phase-2/docs/IMPLEMENTATION_STATUS.md` and `phase-2/docs/EVIDENCE_LOG.md`.
