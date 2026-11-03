@@ -399,3 +399,21 @@ OK
 ```
 
 All 67 tests reported `ok`; zero failures and zero errors. The three CLI demonstrations and complete test suite are locally verified. These are user-space teaching simulations, not a kernel virtual-memory implementation.
+
+
+## Working-set model and thrashing risk — source added, local verification pending
+
+Added `phase-2/src/citizen_os/working_set.py` and `phase-2/tests/test_working_set.py`.
+
+The model computes the distinct pages in each trailing reference window and flags a memory-pressure step when that working-set size exceeds the process's allocated frame count. The sample uses a five-reference window and three allocated frames. This is an educational working-set pressure indicator; it does not measure real system page-fault frequency or detect kernel-level thrashing.
+
+Commands to run from the repository root after pulling:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/working_set.py phase-2/src/main.py
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py working-set-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py thrashing-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+The new implementation includes 10 focused tests. These commands have not yet been run on the project owner's Ubuntu machine; outputs and test count must be added after actual execution.
