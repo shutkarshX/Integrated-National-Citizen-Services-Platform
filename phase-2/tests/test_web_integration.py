@@ -6,7 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
-import web_app
+import os_lab_app
 
 class WebIntegrationTests(unittest.TestCase):
     def setUp(self):
@@ -14,7 +14,7 @@ class WebIntegrationTests(unittest.TestCase):
         self.store = Path(self.temp.name) / "requests.json"
         self.patch = patch.object(web_app, "DATA_FILE", self.store)
         self.patch.start()
-        self.server = web_app.create_server(port=0)
+        self.server = os_lab_app.create_server(port=0)
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
         self.base = f"http://127.0.0.1:{self.server.server_port}"
@@ -46,7 +46,7 @@ class WebIntegrationTests(unittest.TestCase):
         status, result = self.request("/api/requests", {"citizen": "Demo User", "service": "Tax services", "burst": 3, "arrival": 0, "priority": 1})
         self.assertEqual(status, 201)
         self.assertEqual(result["request"]["pid"], 101)
-        self.assertEqual(web_app.load_requests()[0]["citizen"], "Demo User")
+        self.assertEqual(os_lab_app.load_requests()[0]["citizen"], "Demo User")
 
     def test_invalid_request_is_rejected(self):
         status, result = self.request("/api/requests", {"citizen": "", "service": "Tax services", "burst": 0, "arrival": 0, "priority": 1})
