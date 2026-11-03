@@ -510,3 +510,21 @@ OK
 ```
 
 All 88 tests reported `ok`; zero failures and zero errors. The loading/linking test module contributes 11 tests. The implementation remains an educational user-space model, not a real object-file linker, executable loader or hardware MMU.
+
+
+## File management and disk scheduling — source added, local verification pending
+
+Added `phase-2/src/citizen_os/file_disk.py` and `phase-2/tests/test_file_disk.py`.
+
+The file-access model demonstrates sequential, direct and indexed record lookup. The file-allocation model demonstrates contiguous, linked and indexed block allocation, including pointer chains and reserved index blocks. The disk scheduler compares FCFS, SSTF, SCAN, C-SCAN, LOOK and C-LOOK, supports left/right initial direction for directional algorithms, and reports the head path and total movement.
+
+Run from repository root after pulling:
+
+```bash
+PYTHONPATH=phase-2/src python3 -m py_compile phase-2/src/citizen_os/file_disk.py phase-2/src/main.py
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py file-management-demo
+PYTHONPATH=phase-2/src python3 phase-2/src/main.py disk-scheduling-demo
+PYTHONPATH=phase-2/src python3 -m unittest discover -s phase-2/tests -v
+```
+
+The new test module covers the access/allocation methods and six disk algorithms. These are in-memory educational simulations, not real filesystem operations or physical disk I/O. Local verification is pending.
